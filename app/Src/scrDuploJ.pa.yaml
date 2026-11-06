@@ -1,0 +1,544 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrDuploJ:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =Set(gMostrarDJ, false);
+        ClearCollect(colDJ,
+            AddColumns(
+                Filter(Filter(TxDispositivo, Tipo.Value = "Cateter duplo J"), IsBlank(DataRetirada)),
+                nome, LookUp(TxPaciente, ID = PacienteId).Title,
+                leito, LookUp(TxPaciente, ID = PacienteId).Leito,
+                pront, LookUp(TxPaciente, ID = PacienteId).Prontuário,
+                saida, LookUp(TxPaciente, ID = PacienteId).'Data de saída',
+                stPac, LookUp(TxPaciente, ID = PacienteId).Status.Value,
+                dias, If(IsBlank(DataInsercao), -1, DateDiff(DataInsercao, Today(), TimeUnit.Days))))
+    Children:
+      - btnSugDJ:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugDJ);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug && !gMostrarDJ
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugDJ:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoDJ:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoDJ:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloDJ:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoDJ.Width - 48
+                  X: =recSugCartaoDJ.X + 24
+                  Y: =recSugCartaoDJ.Y + 20
+            - lblSugInfoDJ:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoDJ.Width - 48
+                  X: =recSugCartaoDJ.X + 24
+                  Y: =recSugCartaoDJ.Y + 56
+            - txtSugDJ:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoDJ.Width - 48
+                  X: =recSugCartaoDJ.X + 24
+                  Y: =recSugCartaoDJ.Y + 108
+            - btnSugCancelarDJ:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugDJ);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoDJ.Width - 56) / 2
+                  X: =recSugCartaoDJ.X + 24
+                  Y: =recSugCartaoDJ.Y + recSugCartaoDJ.Height - 68
+            - btnSugEnviarDJ:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugDJ.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugDJ.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugDJ.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugDJ);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoDJ.Width - 56) / 2
+                  X: =recSugCartaoDJ.X + 32 + (recSugCartaoDJ.Width - 56) / 2
+                  Y: =recSugCartaoDJ.Y + recSugCartaoDJ.Height - 68
+      - ctnDuploJ:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - lblDJVoltar:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =If(App.Width < 600, 40, 28)
+                  OnSelect: =Navigate(scrInicio)
+                  PaddingLeft: =0
+                  Text: ="< Voltar ao início"
+                  Width: =If(App.Width < 600, 200, 240)
+                  X: =24
+                  Y: =If(App.Width < 600, 12, 20)
+            - lblDJTitulo:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =34
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 18, 20)
+                  Text: ="Duplo J em uso"
+                  Width: =If(App.Width < 600, Parent.Width - 48, Parent.Width - 240)
+                  X: =24
+                  Y: =If(App.Width < 600, 60, 54)
+            - lblDJSub:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =24
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 11)
+                  Text: |-
+                    =CountRows(colDJ) & " em uso · " &
+                    CountRows(Filter(colDJ, dias >= 60)) & " com D60 ou mais · " &
+                    CountRows(Filter(colDJ, dias >= 30 && dias < 60)) & " entre D30 e D59 · " &
+                    CountRows(Filter(colDJ, dias < 0)) & " sem data de inserção"
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblDJTitulo.Y + lblDJTitulo.Height + 4, 92)
+            - lblDJLegenda:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 10)
+                  Text: ="Internados e de alta. Toque na linha para registrar a retirada."
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblDJSub.Y + lblDJSub.Height + 2, 116)
+            - btnDJAtualizar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: |-
+                    =ClearCollect(colDJ,
+                        AddColumns(
+                            Filter(Filter(TxDispositivo, Tipo.Value = "Cateter duplo J"), IsBlank(DataRetirada)),
+                            nome, LookUp(TxPaciente, ID = PacienteId).Title,
+                            leito, LookUp(TxPaciente, ID = PacienteId).Leito,
+                            pront, LookUp(TxPaciente, ID = PacienteId).Prontuário,
+                            saida, LookUp(TxPaciente, ID = PacienteId).'Data de saída',
+                            stPac, LookUp(TxPaciente, ID = PacienteId).Status.Value,
+                            dias, If(IsBlank(DataInsercao), -1, DateDiff(DataInsercao, Today(), TimeUnit.Days))));
+                    Notify("Painel atualizado.", NotificationType.Success)
+                  Size: =12
+                  Text: ="Atualizar"
+                  Width: =If(App.Width < 600, 120, 160)
+                  X: =Parent.Width - Self.Width - 24
+                  Y: =If(App.Width < 600, 12, 54)
+            - lblDJVazio:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =12
+                  Text: ="Nenhum duplo J em uso."
+                  Visible: =CountRows(colDJ) = 0
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblDJLegenda.Y + lblDJLegenda.Height + 12, 156)
+            - galDJ:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  BorderThickness: =1
+                  Height: =Parent.Height - Self.Y - 20
+                  Items: =Sort(colDJ, dias, SortOrder.Descending)
+                  OnSelect: |-
+                    =Set(gDJSel, ThisItem);
+                    Set(gResetDJ, true);
+                    Set(gResetDJ, false);
+                    Set(gMostrarDJ, true)
+                  TemplateSize: =If(App.Width < 600, 180, 76)
+                  Visible: =CountRows(colDJ) > 0
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblDJLegenda.Y + lblDJLegenda.Height + 12, 150)
+                Children:
+                  - lblDJNome:
+                      Control: Label@2.5.1
+                      Properties:
+                        AutoHeight: =App.Width < 600
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(22, 32, 43, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =26
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        Text: |-
+                          =Coalesce(ThisItem.nome, "Paciente não encontrado") &
+                          If(IsBlank(ThisItem.leito), "", " · leito " & ThisItem.leito) &
+                          If(IsBlank(ThisItem.pront), "", " · prontuário " & ThisItem.pront)
+                        Width: =If(App.Width < 600, Parent.TemplateWidth - 32, Parent.TemplateWidth - 260)
+                        X: =16
+                        Y: =If(App.Width < 600, If(lblDJSinal.Visible, 44, 10), 10)
+                  - lblDJDet:
+                      Control: Label@2.5.1
+                      Properties:
+                        AutoHeight: =App.Width < 600
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 110, 122, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =24
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        Size: =If(App.Width < 600, 12, 11)
+                        Text: |-
+                          =If(IsBlank(ThisItem.saida), "Internado", Coalesce(ThisItem.stPac, "Saída") & " em " & Text(ThisItem.saida, "dd/mm/yyyy")) &
+                          " · " & If(ThisItem.dias < 0, "inserção sem data",
+                              "D" & ThisItem.dias & " · inserido em " & Text(ThisItem.DataInsercao, "dd/mm/yyyy") &
+                              If(ThisItem.dias >= 60, " · retirada atrasada desde ", " · retirar até ") & Text(DateAdd(ThisItem.DataInsercao, 60, TimeUnit.Days), "dd/mm/yyyy")) &
+                          If(IsBlank(ThisItem.Local), "", " · " & ThisItem.Local) &
+                          If(IsBlank(ThisItem.PrevisaoRetirada), "", " · retirada prevista " & Text(ThisItem.PrevisaoRetirada, "dd/mm/yyyy"))
+                        Width: =If(App.Width < 600, Parent.TemplateWidth - 32, Parent.TemplateWidth - 260)
+                        X: =16
+                        Y: =If(App.Width < 600, lblDJNome.Y + lblDJNome.Height + 4, 40)
+                  - lblDJSinal:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(ThisItem.dias >= 60, RGBA(160, 43, 43, 1), RGBA(154, 114, 17, 1))
+                        Fill: =If(ThisItem.dias >= 60, RGBA(251, 234, 234, 1), RGBA(251, 243, 223, 1))
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =26
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        Size: =If(App.Width < 600, 12, 10)
+                        Text: =If(ThisItem.dias >= 60, "D60+ RETIRAR", ThisItem.dias >= 30, "RETIRAR ATÉ D60", ThisItem.dias < 0, "SEM DATA", "")
+                        Visible: =!IsBlank(Self.Text)
+                        Width: =If(App.Width < 600, 170, 210)
+                        X: =If(App.Width < 600, 16, Parent.TemplateWidth - Self.Width - 16)
+                        Y: =If(App.Width < 600, 10, (Parent.TemplateHeight / 2) - (Self.Height / 2))
+                  - recDJSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 243, 246, 1)
+                        Height: =1
+                        OnSelect: =Select(Parent)
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - Self.Height
+            - recDJFundo:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  Height: =Parent.Height
+                  Visible: =gMostrarDJ
+                  Width: =Parent.Width
+            - recDJCartao:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =If(App.Width < 600, 420, 320)
+                  Visible: =gMostrarDJ
+                  Width: =Min(640, Parent.Width - 32)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - Self.Height) / 2
+            - lblDJPTitulo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Retirada do duplo J"
+                  Visible: =gMostrarDJ
+                  Width: =recDJCartao.Width - 48
+                  X: =recDJCartao.X + 24
+                  Y: =recDJCartao.Y + 20
+            - lblDJPPac:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 58, 48)
+                  PaddingLeft: =0
+                  Size: =12
+                  Text: |-
+                    =Coalesce(gDJSel.nome, "Paciente não encontrado") &
+                    If(IsBlank(gDJSel.leito), "", " · leito " & gDJSel.leito) &
+                    If(gDJSel.dias < 0, " · inserção sem data",
+                        " · inserido em " & Text(gDJSel.DataInsercao, "dd/mm/yyyy") & " (D" & gDJSel.dias & ")")
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =gMostrarDJ
+                  Width: =recDJCartao.Width - 48
+                  X: =recDJCartao.X + 24
+                  Y: =recDJCartao.Y + 60
+            - lblDJPDataCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 11)
+                  Text: ="Data da retirada"
+                  Visible: =gMostrarDJ
+                  Width: =recDJCartao.Width - 48
+                  X: =recDJCartao.X + 24
+                  Y: =recDJCartao.Y + 120
+            - dtpDJRetirada:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  Reset: =gResetDJ
+                  Size: =12
+                  Visible: =gMostrarDJ
+                  Width: =If(App.Width < 600, recDJCartao.Width - 48, 280)
+                  X: =recDJCartao.X + 24
+                  Y: =recDJCartao.Y + 144
+            - lblDJPAviso:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 40, 22)
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 10)
+                  Text: ="A data não pode ser futura nem anterior à inserção."
+                  Visible: =gMostrarDJ
+                  Width: =recDJCartao.Width - 48
+                  X: =recDJCartao.X + 24
+                  Y: =recDJCartao.Y + 196
+            - btnDJConfirmar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: |-
+                    =If(IsBlank(dtpDJRetirada.SelectedDate) ||
+                        dtpDJRetirada.SelectedDate > Today() ||
+                        (!IsBlank(gDJSel.DataInsercao) && dtpDJRetirada.SelectedDate < gDJSel.DataInsercao),
+                        DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(176, 96, 16, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(150, 80, 12, 1)
+                  OnSelect: |-
+                    =With({atual: LookUp(TxDispositivo, ID = gDJSel.ID)},
+                        If(IsBlank(atual.ID),
+                            Notify("Registro não encontrado. Atualize o painel.", NotificationType.Error),
+                            !IsBlank(atual.DataRetirada),
+                            Notify("Este duplo J já tinha retirada registrada em " & Text(atual.DataRetirada, "dd/mm/yyyy") & ".", NotificationType.Warning),
+                            Patch(TxDispositivo, atual, {DataRetirada: dtpDJRetirada.SelectedDate, UltimaRevisao: Now()});
+                            Notify("Retirada registrada.", NotificationType.Success)));
+                    Set(gMostrarDJ, false);
+                    ClearCollect(colDJ,
+                        AddColumns(
+                            Filter(Filter(TxDispositivo, Tipo.Value = "Cateter duplo J"), IsBlank(DataRetirada)),
+                            nome, LookUp(TxPaciente, ID = PacienteId).Title,
+                            leito, LookUp(TxPaciente, ID = PacienteId).Leito,
+                            pront, LookUp(TxPaciente, ID = PacienteId).Prontuário,
+                            saida, LookUp(TxPaciente, ID = PacienteId).'Data de saída',
+                            stPac, LookUp(TxPaciente, ID = PacienteId).Status.Value,
+                            dias, If(IsBlank(DataInsercao), -1, DateDiff(DataInsercao, Today(), TimeUnit.Days))))
+                  Size: =12
+                  Text: ="Registrar retirada"
+                  Visible: =gMostrarDJ
+                  Width: =If(App.Width < 600, recDJCartao.Width - 48, 280)
+                  X: =recDJCartao.X + 24
+                  Y: =recDJCartao.Y + 248
+            - btnDJAbrir:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: |-
+                    =Set(gPaciente, LookUp(TxPaciente, ID = gDJSel.PacienteId));
+                    Set(gCategoria, "Medicina");
+                    Set(gMostrarDJ, false);
+                    Navigate(scrPaciente)
+                  Size: =12
+                  Text: ="Abrir paciente"
+                  Visible: =gMostrarDJ && !IsBlank(gDJSel.nome) && IsBlank(gDJSel.saida) && !IsBlank(gRound)
+                  Width: =If(App.Width < 600, recDJCartao.Width - 48, 140)
+                  X: =If(App.Width < 600, recDJCartao.X + 24, recDJCartao.X + 320)
+                  Y: =If(App.Width < 600, recDJCartao.Y + 300, recDJCartao.Y + 248)
+            - btnDJCancelar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(74, 91, 109, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(22, 32, 43, 1)
+                  HoverFill: =RGBA(240, 243, 246, 1)
+                  OnSelect: =Set(gMostrarDJ, false)
+                  Size: =12
+                  Text: ="Cancelar"
+                  Visible: =gMostrarDJ
+                  Width: =If(App.Width < 600, recDJCartao.Width - 48, 140)
+                  X: =If(App.Width < 600, recDJCartao.X + 24, recDJCartao.X + 476)
+                  Y: =If(App.Width < 600, recDJCartao.Y + 352, recDJCartao.Y + 248)

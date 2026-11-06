@@ -1,0 +1,14 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    OnStart: |-
+      =Set(gVerde, Value(LookUp(TxConfig, Title = "FaixaVerdeAte").Valor)); Set(gAmarelo, Value(LookUp(TxConfig, Title = "FaixaAmareloAte").Valor)); Set(gVermelho, Value(LookUp(TxConfig, Title = "FaixaVermelhoAte").Valor)); Set(gCategorias, Split(LookUp(TxConfig, Title = "CategoriasAtivas").Valor, ";")); Set(gObrigatorias, Split(LookUp(TxConfig, Title = "CategoriasObrigatorias").Valor, ";")); Set(gUsuario, User()); Set(gMeuLogin, Lower(Left(gUsuario.Email, Coalesce(Find("@", gUsuario.Email), 1) - 1))); Set(gMinhaCategoria, LookUp(TxMembro, Login = gMeuLogin && Ativo = true).Categoria.Value); Set(gMeuMembro, LookUp(TxMembro, Login = gMeuLogin && Ativo = true).Membro); Set(gProximoRound, IfError(DateValue(LookUp(TxConfig, Title = "ProximoRound").Valor), Today())); Set(gDiaRound, With({v: IfError(Value(LookUp(TxConfig, Title = "RoundDiaSemana").Valor), 0)}, If(v >= 1 && v <= 7, v, 2))); Set(gRound, LookUp(TxRound, Status.Value = "Aberto")); If(!IsBlank(gRound) && DateValue(Text(gRound.'Data do round', "yyyy-mm-dd")) < Today(), ClearCollect(colPendAb, Filter(TxPendencia, Status.Value = "Aberta")); Patch(TxRound, gRound, {Status: {Value: "Encerrado"}, 'Encerrado em': Now()}); ForAll(colPendAb, Patch(TxPendencia, ThisRecord, {'Rounds em aberto': Coalesce(ThisRecord.'Rounds em aberto', 0) + 1})); Set(gRound, Blank())); If(IsBlank(gRound) && gProximoRound < Today(), Set(gProximoRound, DateAdd(Today(), Mod(gDiaRound - Weekday(Today()) + 7, 7), TimeUnit.Days)); Patch(TxConfig, LookUp(TxConfig, Title = "ProximoRound"), {Valor: Text(gProximoRound, "yyyy-mm-dd")})); If(IsBlank(gRound) && !IsBlank(gMinhaCategoria), Set(gRound, Patch(TxRound, Defaults(TxRound), {Title: "Round de " & Text(gProximoRound, "dd/mm/yyyy"), 'Data do round': gProximoRound, Status: {Value: "Aberto"}})))
+    StartScreen: =scrInicio
+    Theme: =PowerAppsTheme

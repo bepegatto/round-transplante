@@ -1,0 +1,707 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrPacienteDados:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: =Set(gPlano, LookUp(TxPlano, PacienteRef.Id = gPaciente.ID)); Set(gPDEdit, gIrParaPlano = true); Set(gResetPD, true); Set(gResetPD, false); If(gIrParaPlano = true, SetFocus(txtPDMotivo)); Set(gIrParaPlano, false)
+    Children:
+      - ctnPDCab:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =lblPDModo.Y + lblPDModo.Height + 12
+            Width: =Parent.Width
+          Children:
+            - lblPDVoltar:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =If(App.Width < 600, 40, 28)
+                  OnSelect: =Navigate(scrPaciente)
+                  PaddingLeft: =0
+                  Text: ="< Voltar ao paciente"
+                  Width: =If(App.Width < 600, 200, 240)
+                  X: =24
+                  Y: =If(App.Width < 600, 12, 20)
+            - btnPDEditar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 40, 36)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: =Set(gPDEdit, true)
+                  Size: =12
+                  Text: ="Editar"
+                  Visible: =!gPDEdit
+                  Width: =If(App.Width < 600, 120, 148)
+                  X: =If(App.Width < 600, Parent.Width - 144, Parent.Width - 172)
+                  Y: =If(App.Width < 600, 12, 56)
+            - lblPDTitulo:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =34
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 18, 20)
+                  Text: ="Dados de " & gPaciente.Title
+                  Width: =If(App.Width < 600, Parent.Width - 48, Parent.Width - 200)
+                  X: =24
+                  Y: =If(App.Width < 600, 60, 54)
+            - lblPDModo:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =If(gPDEdit, RGBA(154, 82, 18, 1), RGBA(96, 110, 122, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 11)
+                  Text: =If(gPDEdit, "Modo de edição. Nada é gravado até você salvar.", "Somente leitura.")
+                  Width: =If(App.Width < 600, Parent.Width - 48, Parent.Width - 200)
+                  X: =24
+                  Y: =If(App.Width < 600, lblPDTitulo.Y + lblPDTitulo.Height + 4, 90)
+      - ctnPD:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - If(gPDEdit, 80, 0)
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =16
+            PaddingRight: =12
+            PaddingTop: =4
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnPDCab.Height
+          Children:
+            - lblPDSec1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  LayoutMinHeight: =28
+                  PaddingLeft: =0
+                  Size: =14
+                  Text: ="Cadastro do paciente"
+            - lblPDResumo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Fill: =RGBA(247, 249, 250, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =46
+                  LayoutMinHeight: =46
+                  PaddingLeft: =8
+                  Size: =11
+                  Text: |-
+                    =With({n: gPaciente.'Data de nascimento', t: gPaciente.'Data do transplante', h: Today()},
+                        If(IsBlank(n), "idade não informada", (DateDiff(n, h, TimeUnit.Years) - If(Month(h) * 100 + Day(h) < Month(n) * 100 + Day(n), 1, 0)) & " anos") &
+                        "   ·   " & DateDiff(gPaciente.'Data de admissão', h, TimeUnit.Days) & " dias de internação" &
+                        If(IsBlank(t), "   ·   sem transplante registrado",
+                            With({d: DateDiff(t, h, TimeUnit.Days), m: DateDiff(t, h, TimeUnit.Months) - If(Day(h) < Day(t), 1, 0)},
+                                "   ·   " &
+                                If(m < 3, d & If(d = 1, " dia", " dias"),
+                                   m < 12, m & " meses",
+                                   With({a: RoundDown(m / 12, 0), r: Mod(m, 12)},
+                                       a & If(a = 1, " ano", " anos") & If(r = 0, "", " e " & r & If(r = 1, " mês", " meses")))) &
+                                " pós-transplante")) &
+                        "   ·   " & gPaciente.Status.Value)
+            - lblPDNomeCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Nome completo"
+            - txtPDNome:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPaciente.Title
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDProntCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Prontuário"
+            - txtPDPront:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPaciente.Prontuário
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDNascCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data de nascimento"
+            - dtpPDNasc:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =gPaciente.'Data de nascimento'
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  EndYear: =Year(Today())
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+                  StartYear: =1920
+            - lblPDLeitoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Leito"
+            - txtPDLeito:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPaciente.Leito
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDAdmissaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data de admissão"
+            - dtpPDAdmissao:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =gPaciente.'Data de admissão'
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDTxCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =36
+                  LayoutMinHeight: =36
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data do transplante  ·  preencher quando ocorrer, se o paciente internou antes"
+            - dtpPDTx:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =gPaciente.'Data do transplante'
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDDoadorCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Tipo de doador"
+            - ddPDDoador:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPaciente.'Tipo de doador'.Value
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxPaciente.'Tipo de doador')
+                  Items.Value: =Value
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDPeculCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Peculiaridade imunológica ou infecciosa"
+            - txtPDPecul:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPaciente.'Peculiaridade imunológica ou infecciosa'
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =64
+                  LayoutMinHeight: =64
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetPD
+                  Size: =12
+            - recPDSep1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(230, 234, 238, 1)
+                  Height: =1
+                  LayoutMinHeight: =1
+            - lblPDSec2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  LayoutMinHeight: =28
+                  PaddingLeft: =0
+                  Size: =14
+                  Text: ="Plano terapêutico"
+            - lblPDMotivoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Motivo da internação"
+            - txtPDMotivo:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPlano.MotivoInternacao
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =74
+                  LayoutMinHeight: =74
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDDesfechoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Desfecho pretendido"
+            - txtPDDesfecho:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPlano.DesfechoPretendido
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =74
+                  LayoutMinHeight: =74
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDAlvoOriginal:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Fill: =RGBA(247, 249, 250, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =64
+                  LayoutMinHeight: =64
+                  PaddingLeft: =8
+                  Size: =11
+                  Text: ="Data-alvo de alta ORIGINAL   ·   " & Coalesce(Text(gPlano.DataAlvoAltaOriginal, DateTimeFormat.ShortDate), "não registrada") & Char(10) & "Não se altera. É contra ela que o desvio é medido."
+            - lblPDAlvoAtualCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data-alvo de alta atual"
+            - dtpPDAlvo:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =gPlano.DataAlvoAltaAtual
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDDestinoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Destino após a alta"
+            - ddPDDestino:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gPlano.DestinoPosAlta.Value
+                  DisplayMode: =If(gPDEdit, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxPlano.'Destino após a alta')
+                  Items.Value: =Value
+                  Reset: =gResetPD
+                  Size: =12
+            - lblPDVersaoInfo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Fill: =RGBA(247, 249, 250, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =74
+                  LayoutMinHeight: =74
+                  PaddingLeft: =8
+                  Size: =11
+                  Text: ="Versão atual do plano " & Coalesce(Text(gPlano.VersaoPlano), "—") & "   ·   última revisão " & Coalesce(Text(gPlano.DataUltimaRevisao, DateTimeFormat.ShortDate), "—") & Char(10) & "Alterar o alvo atual ou o destino aqui cria uma versão nova, igual à revisão feita na síntese do round."
+      - recPDRodapeLinha:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(220, 226, 232, 1)
+            Height: =1
+            Visible: =gPDEdit
+            Width: =Parent.Width
+            Y: =Parent.Height - 76
+      - recPDRodape:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(252, 253, 254, 1)
+            Height: =75
+            Visible: =gPDEdit
+            Width: =Parent.Width
+            Y: =Parent.Height - 75
+      - btnPDCancelar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(200, 210, 218, 1)
+            BorderThickness: =1
+            Color: =RGBA(96, 110, 122, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            Height: =44
+            HoverColor: =RGBA(96, 110, 122, 1)
+            HoverFill: =RGBA(240, 243, 246, 1)
+            OnSelect: |-
+              =Set(gPDEdit, false);
+              Set(gResetPD, true);
+              Set(gResetPD, false);
+              Notify("Edição descartada. Nada foi gravado.", NotificationType.Information)
+            Size: =12
+            Text: ="Cancelar"
+            Visible: =gPDEdit
+            Width: =(Parent.Width - 56) / 2
+            X: =24
+            Y: =Parent.Height - 60
+      - btnPDSalvar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            Height: =44
+            HoverFill: =RGBA(12, 90, 100, 1)
+            OnSelect: |-
+              =If(IsBlank(txtPDNome.Text) || IsBlank(txtPDLeito.Text) || IsBlank(dtpPDAdmissao.SelectedDate), Notify("Nome, leito e data de admissão não podem ficar vazios.", NotificationType.Warning), Set(gPaciente, Patch(TxPaciente, LookUp(TxPaciente, ID = gPaciente.ID), {Title: txtPDNome.Text, Prontuário: txtPDPront.Text, 'Data de nascimento': dtpPDNasc.SelectedDate, Leito: txtPDLeito.Text, 'Data de admissão': dtpPDAdmissao.SelectedDate, 'Data do transplante': dtpPDTx.SelectedDate, 'Tipo de doador': ddPDDoador.Selected, 'Peculiaridade imunológica ou infecciosa': txtPDPecul.Text})); If(!IsBlank(gPlano.ID), Set(gPlano, Patch(TxPlano, gPlano, {MotivoInternacao: txtPDMotivo.Text, DesfechoPretendido: txtPDDesfecho.Text}))); If(!IsBlank(gPlano.ID) && (dtpPDAlvo.SelectedDate <> gPlano.DataAlvoAltaAtual || ddPDDestino.Selected.Value <> gPlano.DestinoPosAlta.Value), Set(gPlano, Patch(TxPlano, gPlano, {DataAlvoAltaAtual: dtpPDAlvo.SelectedDate, DestinoPosAlta: ddPDDestino.Selected, VersaoPlano: Coalesce(gPlano.VersaoPlano, 1) + 1, DataUltimaRevisao: Now()})); Patch(TxPlanoVersao, Defaults(TxPlanoVersao), {Title: gPaciente.Title & " · v" & gPlano.VersaoPlano, PlanoRef: {Id: gPlano.ID, Value: gPlano.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, Versao: gPlano.VersaoPlano, DataAlvoAlta: gPlano.DataAlvoAltaAtual, DestinoPosAlta: LookUp(Choices(TxPlanoVersao.DestinoPosAlta), Value = gPlano.DestinoPosAlta.Value), MotivoInternacao: gPlano.MotivoInternacao, DesfechoPretendido: gPlano.DesfechoPretendido, QuemRevisou: gMeuMembro, DataRevisao: Now()})); Set(gPDEdit, false); Set(gResetPD, true); Set(gResetPD, false); Notify("Dados atualizados.", NotificationType.Success))
+            Size: =13
+            Text: ="Salvar alterações"
+            Visible: =gPDEdit
+            Width: =(Parent.Width - 56) / 2
+            X: =24 + (Parent.Width - 56) / 2 + 8
+            Y: =Parent.Height - 60
+      - lblPDSemPlano:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(154, 82, 18, 1)
+            Fill: =RGBA(254, 243, 232, 1)
+            Font: =Font.'Segoe UI'
+            Height: =74
+            PaddingLeft: =8
+            PaddingRight: =8
+            Size: =11
+            Text: ="Este paciente não tem plano terapêutico. Sem plano não é possível registrar critérios de alta nem medir desvio de data." & Char(10) & "Entre em Editar, preencha motivo, desfecho, data-alvo e destino, e use o botão abaixo."
+            Visible: =IsBlank(gPlano.ID)
+      - btnPDCriarPlano:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            Height: =44
+            HoverFill: =RGBA(12, 90, 100, 1)
+            OnSelect: |-
+              =If(IsBlank(txtPDMotivo.Text) || IsBlank(dtpPDAlvo.SelectedDate), Notify("Preencha o motivo da internação e a data-alvo de alta antes de criar o plano.", NotificationType.Warning), Set(gPlano, Patch(TxPlano, Defaults(TxPlano), {Title: gPaciente.Title & " · plano", PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, MotivoInternacao: txtPDMotivo.Text, DesfechoPretendido: txtPDDesfecho.Text, DataAlvoAltaOriginal: dtpPDAlvo.SelectedDate, DataAlvoAltaAtual: dtpPDAlvo.SelectedDate, DestinoPosAlta: ddPDDestino.Selected, OrigemPlano: LookUp(Choices(TxPlano.'Origem do plano'), Value = "Primeiro round"), VersaoPlano: 1, DataUltimaRevisao: Now()}));
+              Patch(TxPlanoVersao, Defaults(TxPlanoVersao), {Title: gPaciente.Title & " · v1", PlanoRef: {Id: gPlano.ID, Value: gPlano.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, Versao: 1, DataAlvoAlta: dtpPDAlvo.SelectedDate, DestinoPosAlta: LookUp(Choices(TxPlanoVersao.DestinoPosAlta), Value = ddPDDestino.Selected.Value), MotivoInternacao: txtPDMotivo.Text, DesfechoPretendido: txtPDDesfecho.Text, QuemRevisou: gMeuMembro, DataRevisao: Now()});
+              Set(gPDEdit, false);
+              Set(gResetPD, true);
+              Set(gResetPD, false);
+              Notify("Plano criado.", NotificationType.Success))
+            Size: =13
+            Text: ="Criar plano terapêutico"
+            Visible: =IsBlank(gPlano.ID) && gPDEdit
+      - btnSugPD:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugPD);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - If(gPDEdit, 132, 56)
+      - ctnSugPD:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoPD:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoPD:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloPD:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoPD.Width - 48
+                  X: =recSugCartaoPD.X + 24
+                  Y: =recSugCartaoPD.Y + 20
+            - lblSugInfoPD:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoPD.Width - 48
+                  X: =recSugCartaoPD.X + 24
+                  Y: =recSugCartaoPD.Y + 56
+            - txtSugPD:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoPD.Width - 48
+                  X: =recSugCartaoPD.X + 24
+                  Y: =recSugCartaoPD.Y + 108
+            - btnSugCancelarPD:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugPD);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoPD.Width - 56) / 2
+                  X: =recSugCartaoPD.X + 24
+                  Y: =recSugCartaoPD.Y + recSugCartaoPD.Height - 68
+            - btnSugEnviarPD:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugPD.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugPD.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugPD.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugPD);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoPD.Width - 56) / 2
+                  X: =recSugCartaoPD.X + 32 + (recSugCartaoPD.Width - 56) / 2
+                  Y: =recSugCartaoPD.Y + recSugCartaoPD.Height - 68

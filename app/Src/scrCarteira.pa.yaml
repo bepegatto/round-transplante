@@ -1,0 +1,474 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrCarteira:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =Set(gCartTipo, Coalesce(gCartTipo, "Todos"));
+        ClearCollect(colMembros, Filter(TxMembro, Ativo = true));
+        Set(gResetCart, true);
+        Set(gResetCart, false);
+        Select(btnCartAtualizar)
+    Children:
+      - galCarteira:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Height: =Parent.Height - 310
+            Items: =Sort(Filter(colCarteira, Coalesce(gCartTipo, "Todos") = "Todos" || tipo = gCartTipo, ddCartStatus.Selected.Value = "Todas" || situacao = ddCartStatus.Selected.Value, tglCartTodas.Value || categoria = ddCartCategoria.Selected.Value || categoria = "sem responsável" || categoria = "sem categoria"), paciente)
+            TemplateSize: =If(App.Width < 600, 200, 100)
+            Width: =Parent.Width
+            Y: =310
+          Children:
+            - lblCartTipoChip:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =If(ThisItem.tipo = "Pendência", RGBA(15, 109, 120, 1), RGBA(109, 72, 150, 1))
+                  Fill: =If(ThisItem.tipo = "Pendência", RGBA(232, 243, 244, 1), RGBA(242, 238, 249, 1))
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =If(App.Width < 600, 26, 20)
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =If(App.Width < 600, 12, 9)
+                  Text: =Upper(ThisItem.tipo)
+                  Width: =If(App.Width < 600, 110, 76)
+                  X: =24
+                  Y: =If(App.Width < 600, 10, 8)
+            - lblCartTitle:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 13, 12)
+                  Text: =ThisItem.titulo
+                  Width: =If(App.Width < 600, Parent.TemplateWidth - 48, Parent.TemplateWidth - 240)
+                  X: =If(App.Width < 600, 24, 108)
+                  Y: =If(App.Width < 600, lblCartTipoChip.Y + lblCartTipoChip.Height + 6, 8)
+            - lblCartStatusItem:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =Switch(ThisItem.situacao, "Concluído", RGBA(21, 128, 61, 1), "Cancelado", RGBA(150, 158, 166, 1), If(ThisItem.vencida, RGBA(160, 43, 43, 1), RGBA(154, 82, 18, 1)))
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =If(App.Width < 600, 26, 22)
+                  PaddingRight: =0
+                  Size: =If(App.Width < 600, 12, 10)
+                  Text: =If(ThisItem.vencida, "VENCIDA", Upper(ThisItem.situacao))
+                  Width: =110
+                  X: =Parent.TemplateWidth - 134
+                  Y: =If(App.Width < 600, 10, 8)
+            - lblCartWho:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =If(ThisItem.categoria = "sem responsável" || ThisItem.categoria = "sem categoria", RGBA(160, 43, 43, 1), RGBA(74, 91, 109, 1))
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 11)
+                  Text: =ThisItem.categoria & If(IsBlank(ThisItem.quem), "", "   ·   " & ThisItem.quem)
+                  Width: =Parent.TemplateWidth - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblCartTitle.Y + lblCartTitle.Height + 4, 34)
+            - lblCartMeta:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =20
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 10)
+                  Text: =ThisItem.paciente & "   ·   " & ThisItem.prazoTexto & If(ThisItem.tipo = "Pendência", "   ·   " & ThisItem.rounds & " rounds", "") & If(ThisItem.bloqueia, "   ·   bloqueia alta", "") & If(IsBlank(ThisItem.conclusaoTexto), "", "   ·   concluído em " & ThisItem.conclusaoTexto)
+                  Width: =Parent.TemplateWidth - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblCartWho.Y + lblCartWho.Height + 2, 54)
+            - btnCartAcao:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(ThisItem.situacao = "Em aberto", RGBA(21, 128, 61, 1), RGBA(96, 110, 122, 1))
+                  Fill: =If(ThisItem.situacao = "Em aberto", RGBA(220, 252, 231, 1), RGBA(240, 243, 246, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 36, 22)
+                  OnSelect: |-
+                    =If(ThisItem.tipo = "Pendência", If(ThisItem.situacao = "Em aberto", Patch(TxPendencia, LookUp(TxPendencia, ID = ThisItem.id), {StatusPendencia: {Value: "Resolvida"}, DataResolucao: Now()}), Patch(TxPendencia, LookUp(TxPendencia, ID = ThisItem.id), {StatusPendencia: {Value: "Aberta"}, DataResolucao: Blank()})), If(ThisItem.situacao = "Em aberto", Patch(TxCriterioAlta, LookUp(TxCriterioAlta, ID = ThisItem.id), {StatusCriterio: {Value: "Cumprido"}, DataCumprimento: Today()}), Patch(TxCriterioAlta, LookUp(TxCriterioAlta, ID = ThisItem.id), {StatusCriterio: {Value: "Pendente"}, DataCumprimento: Blank()})));
+                    Patch(colCarteira, ThisItem, {situacao: If(ThisItem.situacao = "Em aberto", "Concluído", "Em aberto"), vencida: false, conclusaoTexto: If(ThisItem.situacao = "Em aberto", Text(Today(), DateTimeFormat.ShortDate), "")});
+                    Notify("Item atualizado.", NotificationType.Success)
+                  Size: =If(App.Width < 600, 12, 10)
+                  Text: =If(ThisItem.situacao = "Em aberto", If(ThisItem.tipo = "Pendência", "resolver", "cumprir"), "reabrir")
+                  Width: =If(App.Width < 600, 120, 86)
+                  X: =24
+                  Y: =If(App.Width < 600, lblCartMeta.Y + lblCartMeta.Height + 8, 74)
+            - recCartSep:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Height: =1
+                  Width: =Parent.TemplateWidth
+                  Y: =Parent.TemplateHeight - 1
+      - lblCartVoltar:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            OnSelect: =Navigate(scrInicio)
+            PaddingLeft: =0
+            Text: ="< Voltar ao início"
+            Width: =240
+            X: =24
+            Y: =20
+      - lblCartTitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =34
+            PaddingLeft: =0
+            Size: =20
+            Text: ="Minha carteira"
+            Width: =Parent.Width - 160
+            X: =24
+            Y: =54
+      - lblCartCatCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Categoria"
+            Width: =(Parent.Width - 56) / 2
+            X: =24
+            Y: =96
+      - ddCartCategoria:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(200, 208, 216, 1)
+            Default: =gMinhaCategoria
+            DisplayMode: =If(tglCartTodas.Value, DisplayMode.Disabled, DisplayMode.Edit)
+            Font: =Font.'Segoe UI'
+            Height: =44
+            Items: =gCategorias
+            Items.Value: =Value
+            Size: =12
+            Width: =(Parent.Width - 56) / 2
+            X: =24
+            Y: =118
+      - lblCartStatusCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Situação"
+            Width: =(Parent.Width - 56) / 2
+            X: =24 + (Parent.Width - 56) / 2 + 8
+            Y: =96
+      - ddCartStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(200, 208, 216, 1)
+            Default: ="Em aberto"
+            Font: =Font.'Segoe UI'
+            Height: =44
+            Items: =["Em aberto", "Concluído", "Cancelado", "Todas"]
+            Items.Value: =Value
+            Size: =12
+            Width: =(Parent.Width - 56) / 2
+            X: =24 + (Parent.Width - 56) / 2 + 8
+            Y: =118
+      - lblCartTodasCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(74, 91, 109, 1)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Ver todas as categorias"
+            Width: =Parent.Width - 120
+            X: =88
+            Y: =170
+      - lblCartTipoCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Mostrar"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =208
+      - galCartTipo:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Horizontal_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Height: =44
+            Items: =["Todos", "Pendência", "Critério"]
+            ShowScrollbar: =false
+            TemplateSize: =(Parent.Width - 48) / 3
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =230
+          Children:
+            - btnCartTipo:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =If(ThisItem.Value = Coalesce(gCartTipo, "Todos"), RGBA(255, 255, 255, 1), RGBA(15, 109, 120, 1))
+                  Fill: =If(ThisItem.Value = Coalesce(gCartTipo, "Todos"), RGBA(15, 109, 120, 1), RGBA(255, 255, 255, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =36
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(12, 90, 100, 1)
+                  OnSelect: =Set(gCartTipo, ThisItem.Value)
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  Size: =11
+                  Text: =ThisItem.Value
+                  Width: =Parent.TemplateWidth - 8
+                  X: =4
+                  Y: =4
+      - lblCartResumo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 110, 122, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: =CountRows(galCarteira.AllItems) & " item(ns) na visão atual   ·   " & CountRows(Filter(galCarteira.AllItems, vencida)) & " com prazo vencido"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =280
+      - tglCartTodas:
+          Control: Classic/Toggle@2.1.0
+          Properties:
+            Default: =gCartTodas
+            Height: =36
+            OnChange: =Set(gCartTodas, tglCartTodas.Value)
+            Reset: =gResetCart
+            Width: =56
+            X: =24
+            Y: =170
+      - btnCartAtualizar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            Height: =32
+            OnSelect: |-
+              =ClearCollect(colMembros, Filter(TxMembro, Ativo = true));
+              ClearCollect(colPlanos, TxPlano);
+              ClearCollect(colCarteira, ForAll(TxPendencia As p, {tipo: "Pendência", id: p.ID, titulo: p.Title, paciente: Coalesce(p.PacienteRef.Value, "paciente não informado"), quem: Coalesce(p.Responsavel.DisplayName, ""), categoria: If(IsBlank(p.Responsavel.Email), "sem responsável", Coalesce(LookUp(colMembros, Lower(Left(Membro.Email, Coalesce(Find("@", Membro.Email), 1) - 1)) = Lower(Left(p.Responsavel.Email, Coalesce(Find("@", p.Responsavel.Email), 1) - 1))).Categoria.Value, "sem responsável")), prazoTexto: If(IsBlank(p.Prazo), "sem prazo", With({dz: DateValue(Text(p.Prazo, "yyyy-mm-dd"))}, With({n: DateDiff(Today(), dz, TimeUnit.Days)}, If(p.StatusPendencia.Value <> "Aberta", "prazo " & Text(dz, "dd/mm"), n < 0, "vencida há " & -n & If(n = -1, " dia", " dias") & " (" & Text(dz, "dd/mm") & ")", n = 0, "vence hoje", n = 1, "vence amanhã", "vence em " & n & " dias (" & Text(dz, "dd/mm") & ")")))), vencida: p.StatusPendencia.Value = "Aberta" && p.Prazo < Today(), situacao: Switch(p.StatusPendencia.Value, "Aberta", "Em aberto", "Resolvida", "Concluído", "Cancelado"), bloqueia: p.BloqueiaAlta, rounds: Coalesce(p.RoundsEmAberto, 0), conclusaoTexto: Coalesce(Text(p.DataResolucao, DateTimeFormat.ShortDate), "")}));
+              Collect(colCarteira, ForAll(TxCriterioAlta As k, {tipo: "Critério", id: k.ID, titulo: k.Title, paciente: Coalesce(LookUp(colPlanos, ID = k.PlanoRef.Id).PacienteRef.Value, "paciente não informado"), quem: "", categoria: Coalesce(k.CategoriaResponsavel.Value, "sem categoria"), prazoTexto: "sem prazo", vencida: false, situacao: Switch(k.StatusCriterio.Value, "Pendente", "Em aberto", "Cumprido", "Concluído", "Cancelado"), bloqueia: false, rounds: 0, conclusaoTexto: Coalesce(Text(k.DataCumprimento, DateTimeFormat.ShortDate), "")}));
+              Notify("Carteira atualizada.", NotificationType.Success)
+            Size: =11
+            Text: ="Atualizar"
+            Width: =104
+            X: =Parent.Width - 128
+            Y: =56
+      - btnSugCart:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugCart);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugCart:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoCart:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoCart:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloCart:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoCart.Width - 48
+                  X: =recSugCartaoCart.X + 24
+                  Y: =recSugCartaoCart.Y + 20
+            - lblSugInfoCart:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoCart.Width - 48
+                  X: =recSugCartaoCart.X + 24
+                  Y: =recSugCartaoCart.Y + 56
+            - txtSugCart:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoCart.Width - 48
+                  X: =recSugCartaoCart.X + 24
+                  Y: =recSugCartaoCart.Y + 108
+            - btnSugCancelarCart:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugCart);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoCart.Width - 56) / 2
+                  X: =recSugCartaoCart.X + 24
+                  Y: =recSugCartaoCart.Y + recSugCartaoCart.Height - 68
+            - btnSugEnviarCart:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugCart.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugCart.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugCart.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugCart);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoCart.Width - 56) / 2
+                  X: =recSugCartaoCart.X + 32 + (recSugCartaoCart.Width - 56) / 2
+                  Y: =recSugCartaoCart.Y + recSugCartaoCart.Height - 68

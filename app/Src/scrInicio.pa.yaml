@@ -1,0 +1,592 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrInicio:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: =Set(gCategoria, Coalesce(gMinhaCategoria, gCategoria, First(gCategorias).Value)); Set(gAnotacaoAtual, LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria)); Set(gSemAlt, !IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' = true); Set(gAnotacaoBase, If(!IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' <> true, gAnotacaoAtual, First(Sort(Filter(TxAnotacao, PacienteId = gPaciente.ID && Categoria.Value = gCategoria && 'Sem alteração desde o round anterior' = false), 'Data e hora', SortOrder.Descending)))); ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID)); Set(gMostrarDisp, false); Set(gResetForm, true); Set(gResetForm, false)
+    Children:
+      - lblTitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 1)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            Size: =24
+            Text: ="Round Transplante"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =24
+      - lblSubtitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 1)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Text: ="Olá, " & gUsuario.FullName & "  ·  " & gMinhaCategoria
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =66
+      - recKpi1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =104
+            Width: =(Parent.Width - 72) / 3
+            X: =24
+            Y: =110
+      - recKpi2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recKpi1.Height
+            Width: =recKpi1.Width
+            X: =recKpi1.X + recKpi1.Width + 12
+            Y: =recKpi1.Y
+      - recKpi3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recKpi1.Height
+            Width: =recKpi1.Width
+            X: =recKpi2.X + recKpi2.Width + 12
+            Y: =recKpi1.Y
+      - lblKpi1Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =48
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =30
+            Text: =CountRows(Filter(TxPaciente, Status.Value = "Internado"))
+            Width: =recKpi1.Width
+            X: =recKpi1.X
+            Y: =recKpi1.Y + 14
+      - lblKpi1Cap:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =If(App.Width < 600, 40, 32)
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =11
+            Text: ="internados"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =recKpi1.Width
+            X: =recKpi1.X
+            Y: =recKpi1.Y + 62
+      - lblKpi2Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =If(Value(Self.Text) > 0, RGBA(168, 83, 27, 1), RGBA(22, 32, 43, 1))
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =48
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =30
+            Text: =CountRows(Filter(TxPaciente As p, p.Status.Value = "Internado", IsBlank(LookUp(TxPlano, PacienteRef.Id = p.ID).ID)))
+            Width: =recKpi2.Width
+            X: =recKpi2.X
+            Y: =recKpi2.Y + 14
+      - lblKpi2Cap:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =If(App.Width < 600, 40, 32)
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =11
+            Text: ="sem plano"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =recKpi2.Width
+            X: =recKpi2.X
+            Y: =recKpi2.Y + 62
+      - lblKpi3Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =48
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =30
+            Text: =CountRows(Filter(TxPendencia, Status.Value = "Aberta"))
+            Width: =recKpi3.Width
+            X: =recKpi3.X
+            Y: =recKpi3.Y + 14
+      - lblKpi3Cap:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =If(App.Width < 600, 40, 32)
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =11
+            Text: ="pendências abertas"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =recKpi3.Width
+            X: =recKpi3.X
+            Y: =recKpi3.Y + 62
+      - btnAdmitir:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(15, 109, 120, 1)
+            Color: =RGBA(15, 109, 120, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            Height: =48
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(15, 109, 120, 1)
+            OnSelect: =Navigate(scrAdmissao)
+            Size: =13
+            Text: ="Admitir paciente"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =btnCheckin.Y + btnCheckin.Height + 12
+      - btnCarteira:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(15, 109, 120, 1)
+            Color: =RGBA(15, 109, 120, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            Height: =48
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(15, 109, 120, 1)
+            OnSelect: =Navigate(scrCarteira)
+            Size: =13
+            Text: ="Minha carteira"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =btnAdmitir.Y + btnAdmitir.Height + 12
+      - btnKpiPendencias:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =1
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(0, 0, 0, 0)
+            Height: =recKpi3.Height
+            HoverBorderColor: =RGBA(15, 109, 120, 1)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(15, 109, 120, 0.06)
+            OnSelect: |-
+              =Set(gCartTipo, "Pendência");
+              Set(gCartTodas, true);
+              Navigate(scrCarteira)
+            PressedBorderColor: =RGBA(15, 109, 120, 1)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(15, 109, 120, 0.12)
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Text: =""
+            Tooltip: ="Ver as pendências abertas"
+            Width: =recKpi3.Width
+            X: =recKpi3.X
+            Y: =recKpi3.Y
+      - lblNaoCadastrado:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(154, 82, 18, 1)
+            Fill: =RGBA(254, 243, 232, 1)
+            Font: =Font.'Segoe UI'
+            Height: =60
+            PaddingLeft: =12
+            PaddingRight: =12
+            Size: =11
+            Text: ="Você ainda não está cadastrado na equipe do round, e por isso o botão abaixo está indisponível. Peça o seu cadastro ao facilitador."
+            Visible: =IsBlank(gMinhaCategoria)
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =recKpi1.Y + recKpi1.Height + 16
+      - lblMetodoLink:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            FocusedBorderColor: =RGBA(15, 109, 120, 1)
+            FocusedBorderThickness: =2
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            OnSelect: =Navigate(scrMetodo)
+            PaddingLeft: =0
+            Size: =12
+            TabIndex: =0
+            Text: ="O método do round - as seis perguntas"
+            Tooltip: ="Ver as seis perguntas que organizam o round"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =recKpi1.Y + recKpi1.Height + 18 + If(IsBlank(gMinhaCategoria), 76, 0)
+      - btnDuploJ:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(15, 109, 120, 1)
+            Color: =RGBA(15, 109, 120, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            Height: =48
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(15, 109, 120, 1)
+            OnSelect: =Navigate(scrDuploJ)
+            Size: =13
+            Text: ="Duplo J em uso"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =btnCarteira.Y + btnCarteira.Height + 12
+      - btnSugIni:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugIni);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugIni:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoIni:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoIni:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloIni:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoIni.Width - 48
+                  X: =recSugCartaoIni.X + 24
+                  Y: =recSugCartaoIni.Y + 20
+            - lblSugInfoIni:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoIni.Width - 48
+                  X: =recSugCartaoIni.X + 24
+                  Y: =recSugCartaoIni.Y + 56
+            - txtSugIni:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoIni.Width - 48
+                  X: =recSugCartaoIni.X + 24
+                  Y: =recSugCartaoIni.Y + 108
+            - btnSugCancelarIni:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugIni);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoIni.Width - 56) / 2
+                  X: =recSugCartaoIni.X + 24
+                  Y: =recSugCartaoIni.Y + recSugCartaoIni.Height - 68
+            - btnSugEnviarIni:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugIni.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugIni.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugIni.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugIni);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoIni.Width - 56) / 2
+                  X: =recSugCartaoIni.X + 32 + (recSugCartaoIni.Width - 56) / 2
+                  Y: =recSugCartaoIni.Y + recSugCartaoIni.Height - 68
+      - lblAvisoRound:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(154, 82, 18, 1)
+            Fill: =RGBA(254, 243, 232, 1)
+            Font: =Font.'Segoe UI'
+            Height: =60
+            PaddingLeft: =12
+            PaddingRight: =12
+            Size: =11
+            Text: ="Hoje é dia de round. Ao terminar, encerre o round no painel e marque a data da próxima sessão."
+            Visible: =gMinhaCategoria = "Medicina" && !IsBlank(gRound) && Text(gRound.'Data do round', "yyyy-mm-dd") = Text(Today(), "yyyy-mm-dd")
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =recKpi1.Y + recKpi1.Height + 58
+      - btnPreencher:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            DisplayMode: =If(IsBlank(gMinhaCategoria), DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(0, 120, 212, 1)
+            Font: =Font.'Segoe UI'
+            Height: =52
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: |-
+              =If(IsBlank(gRound), Set(gRound, Patch(TxRound, Defaults(TxRound), {Title: "Round de " & Text(gProximoRound, "dd/mm/yyyy"), 'Data do round': gProximoRound, Status: {Value: "Aberto"}}))); Set(gModoCoord, false); Navigate(scrPainel)
+            PressedBorderColor: =RGBA(0, 69, 120, 1)
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Text: ="Registrar minha avaliação"
+            Tooltip: ="Registrar a avaliação da sua categoria para o próximo round"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =recKpi1.Y + recKpi1.Height + 58 + If(IsBlank(gMinhaCategoria), 76, 0) + If(lblAvisoRound.Visible, 72, 0)
+      - btnRound:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(17, 59, 102, 1)
+            Font: =Font.'Segoe UI'
+            Height: =52
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: |-
+              =If(IsBlank(gRound), Set(gRound, Patch(TxRound, Defaults(TxRound), {Title: "Round de " & Text(gProximoRound, "dd/mm/yyyy"), 'Data do round': gProximoRound, Status: {Value: "Aberto"}}))); If(Text(gRound.'Data do round', "yyyy/mm/dd") = Text(Today(), "yyyy/mm/dd") && !IsBlank(gMeuMembro) && IsBlank(gRound.Facilitador.Email), Set(gRound, Patch(TxRound, gRound, {Facilitador: gMeuMembro}))); Set(gModoCoord, true); Navigate(scrPainel)
+            PressedBorderColor: =RGBA(0, 69, 120, 1)
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Text: ="Coordenar o round"
+            Tooltip: ="Conduzir a reunião do round, paciente a paciente (médicos)"
+            Visible: =gMinhaCategoria = "Medicina"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =btnPreencher.Y + btnPreencher.Height + 12
+      - btnCheckin:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(IsBlank(gMeuCheckin), RGBA(15, 109, 120, 1), RGBA(138, 184, 144, 1))
+            BorderThickness: =1
+            Color: =If(IsBlank(gMeuCheckin), RGBA(255, 255, 255, 1), RGBA(22, 92, 34, 1))
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 1)
+            DisplayMode: =If(IsBlank(gMinhaCategoria) || IsBlank(gRound), DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =If(IsBlank(gMeuCheckin), RGBA(15, 109, 120, 1), RGBA(237, 246, 237, 1))
+            FocusedBorderColor: =RGBA(15, 109, 120, 1)
+            FocusedBorderThickness: =2
+            Font: =Font.'Segoe UI'
+            Height: =48
+            HoverColor: =If(IsBlank(gMeuCheckin), RGBA(255, 255, 255, 1), RGBA(22, 92, 34, 1))
+            HoverFill: =If(IsBlank(gMeuCheckin), RGBA(12, 90, 100, 1), RGBA(225, 238, 226, 1))
+            OnSelect: |-
+              =Set(gMeuCheckin, LookUp(TxPresenca, RoundId = gRound.ID && Login = gMeuLogin));
+              If(
+                  IsBlank(gRound),
+                  Notify("Não há round aberto nesta semana. Fale com o facilitador.", NotificationType.Warning),
+                  If(
+                      IsBlank(gMeuCheckin),
+                      Set(
+                          gMeuCheckin,
+                          Patch(
+                              TxPresenca,
+                              Defaults(TxPresenca),
+                              {
+                                  Title: gUsuario.FullName,
+                                  RoundRef: {Id: gRound.ID, Value: gRound.Title},
+                                  RoundId: gRound.ID,
+                                  Membro: gMeuMembro,
+                                  Login: gMeuLogin,
+                                  Categoria: {Value: gMinhaCategoria},
+                                  DataHora: Now()
+                              }
+                          )
+                      );
+                      Notify("Check-in feito. Bom round.", NotificationType.Success),
+                      Remove(TxPresenca, gMeuCheckin);
+                      Set(gMeuCheckin, Blank());
+                      Notify("Check-in desfeito.", NotificationType.Information)
+                  )
+              )
+            PressedBorderColor: =RGBA(15, 109, 120, 1)
+            PressedColor: =If(IsBlank(gMeuCheckin), RGBA(255, 255, 255, 1), RGBA(22, 92, 34, 1))
+            PressedFill: =If(IsBlank(gMeuCheckin), RGBA(12, 90, 100, 1), RGBA(215, 232, 217, 1))
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =13
+            Text: =If(IsBlank(gMeuCheckin), "Fazer check-in no round", "Check-in feito às " & Text(gMeuCheckin.DataHora, DateTimeFormat.ShortTime) & "  ·  toque para desfazer")
+            Tooltip: ="Registrar que você está no round de hoje"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =If(btnRound.Visible, btnRound.Y + btnRound.Height, btnPreencher.Y + btnPreencher.Height) + 12
+      - btnKpiInternados:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =1
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(0, 0, 0, 0)
+            Height: =recKpi1.Height
+            HoverBorderColor: =RGBA(15, 109, 120, 1)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(15, 109, 120, 0.06)
+            OnSelect: =Set(gModoCoord, false); Navigate(scrPainel)
+            PressedBorderColor: =RGBA(15, 109, 120, 1)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(15, 109, 120, 0.12)
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Text: =""
+            Tooltip: ="Ver o painel de pacientes internados"
+            Width: =recKpi1.Width
+            X: =recKpi1.X
+            Y: =recKpi1.Y

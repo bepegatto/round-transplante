@@ -1,0 +1,726 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrPainel:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: =ClearCollect(colPresRound, Filter(TxPresenca, RoundId = gRound.ID))
+    Children:
+      - ScreenContainer1:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(245, 245, 245, 1)
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =16
+            PaddingBottom: =16
+            PaddingLeft: =16
+            PaddingRight: =16
+            PaddingTop: =16
+            Width: =Parent.Width
+          Children:
+            - HeaderContainer1:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =75
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+            - MainContainer1:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                Children:
+                  - galPacientes:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        BorderColor: =RGBA(245, 245, 245, 1)
+                        Items: |-
+                          =With({base: AddColumns(Filter(TxPaciente, Status.Value = "Internado" || gMostrarSaidas), dias, DateDiff('Data de admissão', If(IsBlank('Data de saída'), Today(), 'Data de saída'), TimeUnit.Days), faixaOrd, With({d: DateDiff('Data de admissão', If(IsBlank('Data de saída'), Today(), 'Data de saída'), TimeUnit.Days)}, If(d <= gVerde, 1, d <= gAmarelo, 2, d <= gVermelho, 3, 4)))}, If(gModoCoord, Sort(base, Leito), Sort(Sort(base, dias, SortOrder.Descending), faixaOrd, SortOrder.Descending)))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(gPaciente, ThisItem); ClearCollect(colOrdem, galPacientes.AllItems); Set(gPosCoord, LookUp(ForAll(Sequence(CountRows(colOrdem)), {n: Value, id: Index(colOrdem, Value).ID}), id = gPaciente.ID).n); If(gModoCoord, Navigate(scrSintese), Set(gCategoria, If(IsBlank(gMinhaCategoria), "Medicina", gMinhaCategoria)); Navigate(scrPaciente))
+                        TemplateSize: =If(App.Width < 600, 150, 92)
+                      Children:
+                        - Title1:
+                            Control: Label@2.5.1
+                            Properties:
+                              AutoHeight: =App.Width < 600
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(22, 32, 43, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =Self.Size * 1.8
+                              OnSelect: =Select(Parent)
+                              PaddingLeft: =0
+                              Size: =16
+                              Text: =ThisItem.Title
+                              VerticalAlign: =VerticalAlign.Top
+                              Width: =If(App.Width < 600, Parent.TemplateWidth - 76, Parent.TemplateWidth - 450)
+                              X: =16
+                              Y: =If(App.Width < 600, 12, 14)
+                        - Subtitle1:
+                            Control: Label@2.5.1
+                            Properties:
+                              AutoHeight: =App.Width < 600
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(96, 94, 92, 1)
+                              Font: =Font.'Segoe UI'
+                              Height: =Self.Size * 1.8
+                              OnSelect: =Select(Parent)
+                              PaddingLeft: =0
+                              Size: =12
+                              Text: |-
+                                ="Leito " & ThisItem.Leito & " · " & ThisItem.dias & "d" & If(IsBlank(ThisItem.'Data de saída'), " internado", " · " & ThisItem.Status.Value) &
+                                With({a: ThisItem.'Data de admissão', t: DateAdd(Today(), -(Weekday(Today(), StartOfWeek.Tuesday) - 1), TimeUnit.Days)},
+                                With({u: If(ThisItem.UltimoSwab >= a, ThisItem.UltimoSwab)},
+                                    If(!IsBlank(ThisItem.'Data de saída') || ("Contato" in ThisItem.Precaucao.Value && !ThisItem.PrecaucaoEmpirica), "",
+                                       IsBlank(u), If(DateDiff(a, Today(), TimeUnit.Days) >= 2, " · SEM SWAB ADMISSIONAL", ""),
+                                       a <= t && DateDiff(u, t, TimeUnit.Days) >= 2, If(t = Today(), " · COLETAR SWAB HOJE", " · SWAB VENCIDO"),
+                                       "")))
+                              VerticalAlign: =VerticalAlign.Top
+                              Width: =Title1.Width
+                              X: =Title1.X
+                              Y: =Title1.Y + Title1.Height + 4
+                        - lblFaixa:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Color: |-
+                                =With({d: ThisItem.dias}, If(d <= gVerde, RGBA(44, 110, 73, 1), d <= gAmarelo, RGBA(154, 114, 17, 1), d <= gVermelho, RGBA(168, 83, 27, 1), RGBA(160, 43, 43, 1)))
+                              Fill: |-
+                                =With({d: ThisItem.dias}, If(d <= gVerde, RGBA(231, 242, 236, 1), d <= gAmarelo, RGBA(251, 243, 223, 1), d <= gVermelho, RGBA(251, 238, 228, 1), RGBA(251, 234, 234, 1)))
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =26
+                              OnSelect: =Select(Parent)
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              Size: =12
+                              Text: |-
+                                =With({d: ThisItem.dias}, If(d <= gVerde, "VERDE", d <= gAmarelo, "AMARELO", d <= gVermelho, "VERMELHO", "CRÍTICO"))
+                              Width: =100
+                              X: =If(App.Width < 600, 16, Parent.TemplateWidth - Self.Width - 62)
+                              Y: =If(App.Width < 600, Subtitle1.Y + Subtitle1.Height + 8, (Parent.TemplateHeight / 2) - (Self.Height / 2))
+                        - NextArrow1:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              AccessibleLabel: =Self.Tooltip
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(166, 166, 166, 1)
+                              Height: =50
+                              Icon: =Icon.ChevronRight
+                              OnSelect: =Select(Parent)
+                              PaddingBottom: =16
+                              PaddingLeft: =16
+                              PaddingRight: =16
+                              PaddingTop: =16
+                              Tooltip: ="Exibir detalhes do item"
+                              Width: =50
+                              X: =Parent.TemplateWidth - Self.Width - If(App.Width < 600, 4, 12)
+                              Y: =If(App.Width < 600, 6, (Parent.TemplateHeight / 2) - (Self.Height / 2))
+                        - Separator1:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(240, 243, 246, 1)
+                              Height: =1
+                              OnSelect: =Select(Parent)
+                              Width: =Parent.TemplateWidth
+                              Y: =Parent.TemplateHeight - Self.Height
+                        - Rectangle1:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(15, 109, 120, 1)
+                              Height: =Parent.TemplateHeight - Separator1.Height
+                              OnSelect: =Select(Parent)
+                              Visible: =ThisItem.IsSelected
+                              Width: =4
+                        - lblPrecPainel:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Color: =If(CountRows(ThisItem.Precaucao) = 0, RGBA(154, 114, 17, 1), RGBA(0, 106, 128, 1))
+                              Fill: =If(CountRows(ThisItem.Precaucao) = 0, RGBA(251, 243, 223, 1), RGBA(220, 244, 250, 1))
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =26
+                              OnSelect: =Select(Parent)
+                              PaddingLeft: =6
+                              PaddingRight: =6
+                              Size: =12
+                              Text: |-
+                                =If(CountRows(ThisItem.Precaucao) = 0,
+                                       If(IsBlank(ThisItem.'Data de saída'), "ISOLAMENTO NÃO AVALIADO", ""),
+                                   "Padrão" in ThisItem.Precaucao.Value, "",
+                                   Upper(Concat(ThisItem.Precaucao, Value, " + ")) & If(ThisItem.PrecaucaoEmpirica, " (EMPÍRICO)", ""))
+                              Visible: =!IsBlank(Self.Text)
+                              Width: =If(App.Width < 600, Parent.TemplateWidth - lblFaixa.X - lblFaixa.Width - 26, 250)
+                              X: =If(App.Width < 600, lblFaixa.X + lblFaixa.Width + 10, lblFaixa.X - Self.Width - 10)
+                              Y: =lblFaixa.Y
+            - FooterContainer1:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =If(gModoCoord, 128, 64)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+      - lblMostrarSaidas:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(96, 110, 122, 1)
+            Height: =24
+            Size: =10
+            Text: ="Com saída"
+            Width: =100
+            X: =Parent.Width - 176
+            Y: =18
+      - tglMostrarSaidas:
+          Control: Classic/Toggle@2.1.0
+          Properties:
+            OnChange: =Set(gMostrarSaidas, tglMostrarSaidas.Value)
+            Width: =56
+            X: =Parent.Width - 68
+            Y: =16
+      - recPresFundo:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(0, 0, 0, 0.55)
+            Height: =Parent.Height
+            Visible: =gMostrarPres
+            Width: =Parent.Width
+      - recPresCartao:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =430
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =120
+      - lblPresTitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(32, 54, 71, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            PaddingLeft: =0
+            Size: =16
+            Text: ="Quem está no round"
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =144
+      - lblPresSub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 110, 122, 1)
+            Font: =Font.'Segoe UI'
+            Height: =22
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Round de " & Text(gRound.'Data do round', DateTimeFormat.ShortDate) & "  ·  registro do facilitador"
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =176
+      - lblPresCatCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Categorias presentes"
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =208
+      - cmbPresCategorias:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(200, 208, 216, 1)
+            DefaultSelectedItems: |-
+              =If(CountRows(gRound.'Categorias presentes') > 0, gRound.'Categorias presentes', ForAll(Distinct(colPresRound, Categoria.Value) As c, {Value: c.Value}))
+            DisplayFields: =["Value"]
+            Font: =Font.'Segoe UI'
+            Height: =52
+            IsSearchable: =false
+            Items: =Choices(TxRound.'Categorias presentes')
+            Reset: =gResetPres
+            SearchFields: =["Value"]
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =232
+      - lblPresTextoCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Quem esteve, por extenso"
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =296
+      - txtPresTexto:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(200, 208, 216, 1)
+            Default: =If(!IsBlank(gRound.'Descritivo de presentes'), gRound.'Descritivo de presentes', Concat(Sort(colPresRound, Categoria.Value), Title & " - " & Categoria.Value, ", "))
+            Font: =Font.'Segoe UI'
+            Height: =84
+            HintText: ="Nomes, residentes, visitantes, quem entrou depois"
+            Mode: =TextMode.MultiLine
+            Reset: =gResetPres
+            Size: =12
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =320
+      - btnPresGravar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            Height: =44
+            HoverFill: =RGBA(12, 90, 100, 1)
+            OnSelect: |-
+              =Set(gRound, Patch(TxRound, gRound, {'Categorias presentes': cmbPresCategorias.SelectedItems, 'Descritivo de presentes': txtPresTexto.Text}));
+              Notify("Presença registrada.", NotificationType.Success);
+              Set(gMostrarPres, false)
+            Size: =12
+            Text: ="Gravar presença"
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =418
+      - btnPresCancelar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(200, 210, 218, 1)
+            Color: =RGBA(96, 110, 122, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            OnSelect: =Set(gMostrarPres, false)
+            Size: =11
+            Text: ="Cancelar"
+            Visible: =gMostrarPres
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =470
+      - lblPainelVoltar:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            OnSelect: =Navigate(scrInicio)
+            PaddingLeft: =0
+            Size: =12
+            Text: ="< Início"
+            Width: =160
+            X: =24
+            Y: =18
+      - ctnSugPai:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoPai:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoPai:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloPai:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoPai.Width - 48
+                  X: =recSugCartaoPai.X + 24
+                  Y: =recSugCartaoPai.Y + 20
+            - lblSugInfoPai:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoPai.Width - 48
+                  X: =recSugCartaoPai.X + 24
+                  Y: =recSugCartaoPai.Y + 56
+            - txtSugPai:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoPai.Width - 48
+                  X: =recSugCartaoPai.X + 24
+                  Y: =recSugCartaoPai.Y + 108
+            - btnSugCancelarPai:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugPai);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoPai.Width - 56) / 2
+                  X: =recSugCartaoPai.X + 24
+                  Y: =recSugCartaoPai.Y + recSugCartaoPai.Height - 68
+            - btnSugEnviarPai:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugPai.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugPai.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugPai.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugPai);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoPai.Width - 56) / 2
+                  X: =recSugCartaoPai.X + 32 + (recSugCartaoPai.Width - 56) / 2
+                  Y: =recSugCartaoPai.Y + recSugCartaoPai.Height - 68
+      - recEncFundo:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(0, 0, 0, 0.55)
+            Height: =Parent.Height
+            Visible: =gMostrarEnc
+            Width: =Parent.Width
+      - recEncCartao:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =330
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =120
+      - lblEncTitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(32, 54, 71, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            PaddingLeft: =0
+            Size: =16
+            Text: ="Encerrar o round de " & Text(gRound.'Data do round', "dd/mm/yyyy")
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =144
+      - lblEncSub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 110, 122, 1)
+            Font: =Font.'Segoe UI'
+            Height: =48
+            PaddingLeft: =0
+            Size: =11
+            Text: ="As pendências abertas seguem para o próximo round. O que a equipe preencher a partir de agora vai para a próxima sessão."
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =178
+      - lblEncDataCap:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Data do próximo round"
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =236
+      - dtpEncProximo:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(200, 208, 216, 1)
+            DefaultDate: =DateAdd(DateValue(Text(gRound.'Data do round', "yyyy-mm-dd")), 7, TimeUnit.Days)
+            EndYear: =Year(Today()) + 1
+            Font: =Font.'Segoe UI'
+            Height: =44
+            Reset: =gResetEnc
+            Size: =12
+            StartYear: =Year(Today())
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =260
+      - btnEncConfirmar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(17, 59, 102, 1)
+            Font: =Font.'Segoe UI'
+            Height: =44
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: |-
+              =If(
+                  IsBlank(dtpEncProximo.SelectedDate) || dtpEncProximo.SelectedDate <= DateValue(Text(gRound.'Data do round', "yyyy-mm-dd")),
+                  Notify("Escolha uma data posterior à do round que está sendo encerrado.", NotificationType.Warning),
+                  ClearCollect(colPresRound, Filter(TxPresenca, RoundId = gRound.ID));
+                  Set(gRound, LookUp(TxRound, ID = gRound.ID));
+                  If(CountRows(colPresRound) > 0 && CountRows(gRound.'Categorias presentes') = 0, Patch(TxRound, gRound, {'Categorias presentes': ForAll(Distinct(Filter(colPresRound, !IsBlank(Categoria.Value)), Categoria.Value) As c, {Value: c.Value})}));
+                  If(CountRows(colPresRound) > 0 && IsBlank(gRound.'Descritivo de presentes'), Patch(TxRound, gRound, {'Descritivo de presentes': Concat(Sort(colPresRound, Title), Title & " - " & Categoria.Value, ", ")}));
+                  ClearCollect(colPendAb, Filter(TxPendencia, Status.Value = "Aberta"));
+                  Set(gPendAbertas, CountRows(colPendAb));
+                  Patch(TxRound, gRound, {Status: {Value: "Encerrado"}, 'Encerrado em': Now()});
+                  ForAll(colPendAb, Patch(TxPendencia, ThisRecord, {'Rounds em aberto': Coalesce(ThisRecord.'Rounds em aberto', 0) + 1}));
+                  Set(gProximoRound, dtpEncProximo.SelectedDate);
+                  Patch(TxConfig, LookUp(TxConfig, Title = "ProximoRound"), {Valor: Text(gProximoRound, "yyyy-mm-dd")});
+                  Set(gRound, Patch(TxRound, Defaults(TxRound), {Title: "Round de " & Text(gProximoRound, "dd/mm/yyyy"), 'Data do round': gProximoRound, Status: {Value: "Aberto"}}));
+                  Set(gMostrarEnc, false);
+                  Set(gModoCoord, false);
+                  Notify("Round encerrado. " & gPendAbertas & " pendência(s) seguem abertas. Próximo round: " & Text(gProximoRound, "dd/mm/yyyy") & ".", NotificationType.Success);
+                  Navigate(scrInicio)
+              )
+            Size: =12
+            Text: ="Confirmar o encerramento"
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =326
+      - btnEncCancelar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(200, 210, 218, 1)
+            Color: =RGBA(96, 110, 122, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            OnSelect: =Set(gMostrarEnc, false)
+            Size: =11
+            Text: ="Cancelar"
+            Visible: =gMostrarEnc
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =380
+      - btnEncerrarRound:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(17, 59, 102, 1)
+            Font: =Font.'Segoe UI'
+            Height: =48
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: =Set(gResetEnc, true); Set(gResetEnc, false); Set(gMostrarEnc, true)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =13
+            Text: ="Encerrar o round e marcar o próximo"
+            Visible: =!IsBlank(gRound) && gModoCoord && gMinhaCategoria = "Medicina" && !gMostrarPres && !gMostrarEnc
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =Parent.Height - 84
+      - btnAbrirMatriz:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(15, 109, 120, 1)
+            OnSelect: =Navigate(scrMatriz)
+            Size: =12
+            Text: ="Matriz"
+            Visible: =!IsBlank(gRound) && gModoCoord && !gMostrarPres && !gMostrarEnc
+            Width: =124
+            X: =Parent.Width - 148
+            Y: =Parent.Height - 136
+      - btnPresentes:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(15, 109, 120, 1)
+            Color: =RGBA(15, 109, 120, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Segoe UI'
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(15, 109, 120, 1)
+            OnSelect: =ClearCollect(colPresRound, Filter(TxPresenca, RoundId = gRound.ID)); Set(gResetPres, true); Set(gResetPres, false); Set(gMostrarPres, true)
+            Size: =12
+            Text: ="Presentes  " & If(CountRows(colPresRound) > 0, Text(CountRows(colPresRound)), "-")
+            Visible: =!IsBlank(gRound) && gModoCoord && !gMostrarPres && !gMostrarEnc
+            Width: =148
+            X: =24
+            Y: =Parent.Height - 136
+      - btnSugPai:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugPai);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug && !gMostrarPres && !gMostrarEnc
+            Width: =120
+            X: =If(gModoCoord, (Parent.Width - 120) / 2, Parent.Width - 136)
+            Y: =If(gModoCoord, Parent.Height - 134, Parent.Height - 68)

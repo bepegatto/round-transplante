@@ -1,0 +1,531 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrMetodo:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+    Children:
+      - lblMetVoltar:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            FocusedBorderColor: =RGBA(15, 109, 120, 1)
+            FocusedBorderThickness: =2
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            OnSelect: =Navigate(scrInicio)
+            PaddingLeft: =0
+            TabIndex: =0
+            Text: ="< Voltar ao início"
+            Width: =240
+            X: =24
+            Y: =20
+      - lblMetTitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =34
+            PaddingLeft: =0
+            Size: =20
+            Text: ="O método do round"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =54
+      - lblMetSubtitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="As seis perguntas que organizam a discussão de cada paciente, sempre na mesma ordem"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =90
+      - recMet1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =84
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =124
+      - lblMet1Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =22
+            Text: ="1"
+            Width: =40
+            X: =recMet1.X + 16
+            Y: =recMet1.Y + 22
+      - lblMet1Perg:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            PaddingLeft: =0
+            Size: =14
+            Text: ="Por que o paciente está internado hoje?"
+            Width: =recMet1.Width - 80
+            X: =recMet1.X + 64
+            Y: =recMet1.Y + 16
+      - lblMet1Sub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Problema ativo e nível de atenção"
+            Width: =recMet1.Width - 80
+            X: =recMet1.X + 64
+            Y: =recMet1.Y + 46
+      - recMet2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recMet1.Height
+            Width: =recMet1.Width
+            X: =recMet1.X
+            Y: =recMet1.Y + recMet1.Height + 8
+      - lblMet2Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =22
+            Text: ="2"
+            Width: =40
+            X: =recMet2.X + 16
+            Y: =recMet2.Y + 22
+      - lblMet2Perg:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            PaddingLeft: =0
+            Size: =14
+            Text: ="O que impede a alta hoje?"
+            Width: =recMet2.Width - 80
+            X: =recMet2.X + 64
+            Y: =recMet2.Y + 16
+      - lblMet2Sub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Critério de estabilidade pendente"
+            Width: =recMet2.Width - 80
+            X: =recMet2.X + 64
+            Y: =recMet2.Y + 46
+      - recMet3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recMet1.Height
+            Width: =recMet1.Width
+            X: =recMet1.X
+            Y: =recMet2.Y + recMet2.Height + 8
+      - lblMet3Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =22
+            Text: ="3"
+            Width: =40
+            X: =recMet3.X + 16
+            Y: =recMet3.Y + 22
+      - lblMet3Perg:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            PaddingLeft: =0
+            Size: =14
+            Text: ="Quais as metas para superar esse impedimento?"
+            Width: =recMet3.Width - 80
+            X: =recMet3.X + 64
+            Y: =recMet3.Y + 16
+      - lblMet3Sub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Metas clínicas e funcionais"
+            Width: =recMet3.Width - 80
+            X: =recMet3.X + 64
+            Y: =recMet3.Y + 46
+      - recMet4:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recMet1.Height
+            Width: =recMet1.Width
+            X: =recMet1.X
+            Y: =recMet3.Y + recMet3.Height + 8
+      - lblMet4Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =22
+            Text: ="4"
+            Width: =40
+            X: =recMet4.X + 16
+            Y: =recMet4.Y + 22
+      - lblMet4Perg:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            PaddingLeft: =0
+            Size: =14
+            Text: ="O que faremos para atingir essas metas?"
+            Width: =recMet4.Width - 80
+            X: =recMet4.X + 64
+            Y: =recMet4.Y + 16
+      - lblMet4Sub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Estratégia de cuidado e temporalidade"
+            Width: =recMet4.Width - 80
+            X: =recMet4.X + 64
+            Y: =recMet4.Y + 46
+      - recMet5:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recMet1.Height
+            Width: =recMet1.Width
+            X: =recMet1.X
+            Y: =recMet4.Y + recMet4.Height + 8
+      - lblMet5Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =22
+            Text: ="5"
+            Width: =40
+            X: =recMet5.X + 16
+            Y: =recMet5.Y + 22
+      - lblMet5Perg:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            PaddingLeft: =0
+            Size: =14
+            Text: ="Qual o destino pós-alta do paciente?"
+            Width: =recMet5.Width - 80
+            X: =recMet5.X + 64
+            Y: =recMet5.Y + 16
+      - lblMet5Sub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Domicílio, rede de apoio, referência"
+            Width: =recMet5.Width - 80
+            X: =recMet5.X + 64
+            Y: =recMet5.Y + 46
+      - recMet6:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(240, 243, 246, 1)
+            Height: =recMet1.Height
+            Width: =recMet1.Width
+            X: =recMet1.X
+            Y: =recMet5.Y + recMet5.Height + 8
+      - lblMet6Num:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            PaddingLeft: =0
+            PaddingRight: =0
+            Size: =22
+            Text: ="6"
+            Width: =40
+            X: =recMet6.X + 16
+            Y: =recMet6.Y + 22
+      - lblMet6Perg:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            PaddingLeft: =0
+            Size: =14
+            Text: ="Qual a data provável de alta?"
+            Width: =recMet6.Width - 80
+            X: =recMet6.X + 64
+            Y: =recMet6.Y + 16
+      - lblMet6Sub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Previsão ajustada a cada round"
+            Width: =recMet6.Width - 80
+            X: =recMet6.X + 64
+            Y: =recMet6.Y + 46
+      - lblMetRodape:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =24
+            PaddingLeft: =0
+            Size: =11
+            Text: ="As respostas ficam registradas por paciente, na síntese de cada round."
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =recMet6.Y + recMet6.Height + 16
+      - btnSugMet:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugMet);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugMet:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoMet:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoMet:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloMet:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoMet.Width - 48
+                  X: =recSugCartaoMet.X + 24
+                  Y: =recSugCartaoMet.Y + 20
+            - lblSugInfoMet:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoMet.Width - 48
+                  X: =recSugCartaoMet.X + 24
+                  Y: =recSugCartaoMet.Y + 56
+            - txtSugMet:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoMet.Width - 48
+                  X: =recSugCartaoMet.X + 24
+                  Y: =recSugCartaoMet.Y + 108
+            - btnSugCancelarMet:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugMet);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoMet.Width - 56) / 2
+                  X: =recSugCartaoMet.X + 24
+                  Y: =recSugCartaoMet.Y + recSugCartaoMet.Height - 68
+            - btnSugEnviarMet:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugMet.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugMet.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugMet.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugMet);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoMet.Width - 56) / 2
+                  X: =recSugCartaoMet.X + 32 + (recSugCartaoMet.Width - 56) / 2
+                  Y: =recSugCartaoMet.Y + recSugCartaoMet.Height - 68

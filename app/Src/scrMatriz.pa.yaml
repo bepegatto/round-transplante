@@ -1,0 +1,435 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrMatriz:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =ClearCollect(colAnot, Filter(TxAnotacao, RoundId = gRound.ID));
+        Set(gObrigatorias, Split(LookUp(TxConfig, Title = "CategoriasObrigatorias").Valor, ";"))
+    Children:
+      - galMatriz:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Height: =Parent.Height - 146
+            Items: =Sort(Filter(TxPaciente, Status.Value = "Internado"), 'Data de admissão')
+            TemplateSize: =86
+            Width: =Parent.Width
+            Y: =146
+          Children:
+            - lblMatNome:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(32, 54, 71, 1)
+                  FontWeight: =FontWeight.Semibold
+                  Height: =24
+                  PaddingLeft: =0
+                  Text: =ThisItem.Title & "  ·  leito " & ThisItem.Leito
+                  Width: =Parent.TemplateWidth - 140
+                  X: =24
+                  Y: =10
+            - lblMatContagem:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  Color: =RGBA(96, 110, 122, 1)
+                  Height: =24
+                  PaddingRight: =0
+                  Size: =12
+                  Text: =CountRows(Filter(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value in gObrigatorias.Value)) & "/" & CountRows(gObrigatorias)
+                  Width: =92
+                  X: =Parent.TemplateWidth - 116
+                  Y: =10
+            - lblMatMed:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Medicina")}, If(IsBlank(a.'Data e hora'), If("Medicina" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Medicina")}, If(IsBlank(a.'Data e hora'), If("Medicina" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Medicina" in gObrigatorias.Value, "Med", "Med *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24
+                  Y: =44
+            - lblMatEnf:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Enfermagem")}, If(IsBlank(a.'Data e hora'), If("Enfermagem" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Enfermagem")}, If(IsBlank(a.'Data e hora'), If("Enfermagem" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Enfermagem" in gObrigatorias.Value, "Enf", "Enf *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + (Parent.TemplateWidth - 48) / 8
+                  Y: =44
+            - lblMatFar:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Farmácia Clínica")}, If(IsBlank(a.'Data e hora'), If("Farmácia Clínica" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Farmácia Clínica")}, If(IsBlank(a.'Data e hora'), If("Farmácia Clínica" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Farmácia Clínica" in gObrigatorias.Value, "Far", "Far *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + 2 * ((Parent.TemplateWidth - 48) / 8)
+                  Y: =44
+            - lblMatNut:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Nutrição")}, If(IsBlank(a.'Data e hora'), If("Nutrição" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Nutrição")}, If(IsBlank(a.'Data e hora'), If("Nutrição" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Nutrição" in gObrigatorias.Value, "Nut", "Nut *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + 3 * ((Parent.TemplateWidth - 48) / 8)
+                  Y: =44
+            - lblMatFis:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Fisioterapia")}, If(IsBlank(a.'Data e hora'), If("Fisioterapia" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Fisioterapia")}, If(IsBlank(a.'Data e hora'), If("Fisioterapia" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Fisioterapia" in gObrigatorias.Value, "Fis", "Fis *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + 4 * ((Parent.TemplateWidth - 48) / 8)
+                  Y: =44
+            - lblMatSoc:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Serviço Social")}, If(IsBlank(a.'Data e hora'), If("Serviço Social" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Serviço Social")}, If(IsBlank(a.'Data e hora'), If("Serviço Social" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Serviço Social" in gObrigatorias.Value, "Soc", "Soc *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + 5 * ((Parent.TemplateWidth - 48) / 8)
+                  Y: =44
+            - lblMatPsi:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Psicologia")}, If(IsBlank(a.'Data e hora'), If("Psicologia" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Psicologia")}, If(IsBlank(a.'Data e hora'), If("Psicologia" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Psicologia" in gObrigatorias.Value, "Psi", "Psi *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + 6 * ((Parent.TemplateWidth - 48) / 8)
+                  Y: =44
+            - lblMatTO:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Terapia Ocupacional")}, If(IsBlank(a.'Data e hora'), If("Terapia Ocupacional" in gObrigatorias.Value, RGBA(140, 150, 160, 1), RGBA(196, 202, 209, 1)), RGBA(44, 110, 73, 1)))
+                  Fill: |-
+                    =With({a: LookUp(colAnot, PacienteRef.Id = ThisItem.ID && Categoria.Value = "Terapia Ocupacional")}, If(IsBlank(a.'Data e hora'), If("Terapia Ocupacional" in gObrigatorias.Value, RGBA(238, 241, 244, 1), RGBA(252, 253, 254, 1)), RGBA(231, 242, 236, 1)))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =10
+                  Text: =If("Terapia Ocupacional" in gObrigatorias.Value, "TO", "TO *")
+                  Width: =(Parent.TemplateWidth - 48) / 8 - 4
+                  X: =24 + 7 * ((Parent.TemplateWidth - 48) / 8)
+                  Y: =44
+            - recMatSep:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Height: =1
+                  Width: =Parent.TemplateWidth
+                  Y: =Parent.TemplateHeight - 1
+      - lblMatSub:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(96, 110, 122, 1)
+            Height: =24
+            Size: =11
+            Text: |-
+              ="Round de " & Text(gRound.'Data do round', DateTimeFormat.ShortDate) & If(IsBlank(gObrigatorias), "   ·   ATENÇÃO: lista de obrigatórias não carregada", "")
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =50
+      - lblMatLeg0:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(140, 150, 160, 1)
+            Fill: =RGBA(238, 241, 244, 1)
+            Height: =24
+            Size: =10
+            Text: ="Não preenchido"
+            Width: =(Parent.Width - 56) / 2
+            X: =24
+            Y: =82
+      - lblMatLeg1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(44, 110, 73, 1)
+            Fill: =RGBA(231, 242, 236, 1)
+            Height: =24
+            Size: =10
+            Text: ="Preenchido"
+            Width: =(Parent.Width - 56) / 2
+            X: =24 + (Parent.Width - 56) / 2 + 8
+            Y: =82
+      - lblMatLeg4:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(150, 158, 166, 1)
+            Fill: =RGBA(252, 253, 254, 1)
+            Height: =24
+            Size: =10
+            Text: ="*  sob demanda, não entra na contagem"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =110
+      - lblMatTitulo:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(32, 54, 71, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =18
+            Text: ="Matriz de preenchimento"
+            Width: =Parent.Width - 200
+            X: =24
+            Y: =18
+      - btnMatVoltar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(200, 210, 218, 1)
+            Color: =RGBA(96, 110, 122, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =30
+            OnSelect: =Back()
+            Size: =11
+            Text: ="Voltar"
+            Width: =72
+            X: =Parent.Width - 176
+            Y: =18
+      - btnMatAtualizar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(15, 109, 120, 1)
+            Height: =30
+            OnSelect: |-
+              =ClearCollect(colAnot, Filter(TxAnotacao, RoundId = gRound.ID));
+              Set(gObrigatorias, Split(LookUp(TxConfig, Title = "CategoriasObrigatorias").Valor, ";"));
+              Notify("Matriz atualizada", NotificationType.Success)
+            Size: =11
+            Text: ="Atualizar"
+            Width: =72
+            X: =Parent.Width - 96
+            Y: =18
+      - btnSugMat:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugMat);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugMat:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoMat:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoMat:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloMat:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoMat.Width - 48
+                  X: =recSugCartaoMat.X + 24
+                  Y: =recSugCartaoMat.Y + 20
+            - lblSugInfoMat:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoMat.Width - 48
+                  X: =recSugCartaoMat.X + 24
+                  Y: =recSugCartaoMat.Y + 56
+            - txtSugMat:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoMat.Width - 48
+                  X: =recSugCartaoMat.X + 24
+                  Y: =recSugCartaoMat.Y + 108
+            - btnSugCancelarMat:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugMat);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoMat.Width - 56) / 2
+                  X: =recSugCartaoMat.X + 24
+                  Y: =recSugCartaoMat.Y + recSugCartaoMat.Height - 68
+            - btnSugEnviarMat:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugMat.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugMat.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugMat.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugMat);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoMat.Width - 56) / 2
+                  X: =recSugCartaoMat.X + 32 + (recSugCartaoMat.Width - 56) / 2
+                  Y: =recSugCartaoMat.Y + recSugCartaoMat.Height - 68

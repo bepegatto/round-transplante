@@ -1,0 +1,3604 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrPaciente:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =Set(gCategoria, Coalesce(gMinhaCategoria, gCategoria, First(gCategorias).Value));
+        Set(gAnotacaoAtual, LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria));
+        Set(gSemAlt, !IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' = true);
+        ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+        Set(gMostrarDisp, false);
+        Set(gResetForm, true);
+        Set(gResetForm, false)
+    Children:
+      - ctnCabecalho:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =btnSemAlteracao.Y + btnSemAlteracao.Height
+            Width: =Parent.Width
+          Children:
+            - lblVoltar:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =If(App.Width < 600, 40, 28)
+                  OnSelect: =Navigate(scrPainel)
+                  PaddingLeft: =0
+                  Text: ="< Voltar ao painel"
+                  Width: =If(App.Width < 600, 160, 220)
+                  X: =24
+                  Y: =If(App.Width < 600, 12, 20)
+            - btnIrSintese:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 40, 32)
+                  HoverFill: =RGBA(226, 232, 238, 1)
+                  OnSelect: =Navigate(scrSintese)
+                  Size: =12
+                  Text: =If(App.Width < 600, "Síntese  >", "Síntese do round  >")
+                  Visible: =!IsBlank(gRound)
+                  Width: =If(App.Width < 600, 120, 180)
+                  X: =If(App.Width < 600, Parent.Width - 144, Parent.Width - 204)
+                  Y: =If(App.Width < 600, 12, 18)
+            - lblPacPos:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =If(App.Width < 600, Align.Left, Align.Center)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 22, 28)
+                  PaddingLeft: =If(App.Width < 600, 0, 5)
+                  Size: =12
+                  Text: ="Paciente " & gPosCoord & " de " & CountRows(colOrdem)
+                  Visible: =!gModoCoord && CountRows(colOrdem) > 0 && Index(colOrdem, gPosCoord).ID = gPaciente.ID
+                  Width: =If(App.Width < 600, Parent.Width - 48, 200)
+                  X: =If(App.Width < 600, 24, (Parent.Width - 200) / 2)
+                  Y: =If(App.Width < 600, 56, 20)
+            - lblNomePac:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =38
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 18, 22)
+                  Text: =gPaciente.Title
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, If(lblPacPos.Visible, 80, 60), 56)
+            - btnEditarPlano:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 40, 32)
+                  HoverFill: =RGBA(226, 232, 238, 1)
+                  OnSelect: |-
+                    =Set(gPDEdit, true);
+                    Set(gIrParaPlano, true);
+                    Navigate(scrPacienteDados)
+                  Size: =12
+                  Text: ="Editar plano"
+                  Visible: =!gMostrarSaida
+                  Width: =If(App.Width < 600, (Parent.Width - 64) / 3, 120)
+                  X: =If(App.Width < 600, 24, Parent.Width - 350)
+                  Y: =If(App.Width < 600, lblNomePac.Y + lblNomePac.Height + 8, 56)
+            - btnAbrirCadastro:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 40, 32)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: =Navigate(scrPacienteDados)
+                  Size: =12
+                  Text: ="Cadastro"
+                  Visible: =!IsBlank(gPaciente) && !gMostrarSaida
+                  Width: =If(App.Width < 600, (Parent.Width - 64) / 3, 90)
+                  X: =If(App.Width < 600, 24 + 1 * ((Parent.Width - 64) / 3 + 8), Parent.Width - 218)
+                  Y: =If(App.Width < 600, lblNomePac.Y + lblNomePac.Height + 8, 56)
+            - btnAbrirSaida:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  Color: =RGBA(255, 255, 255, 1)
+                  Fill: =RGBA(0, 95, 105, 1)
+                  Height: =If(App.Width < 600, 40, 32)
+                  OnSelect: =Set(gMostrarSaida, true)
+                  Size: =12
+                  Text: ="Saída/alta"
+                  Visible: =!IsBlank(gPaciente) && !gMostrarSaida
+                  Width: =If(App.Width < 600, (Parent.Width - 64) / 3, 96)
+                  X: =If(App.Width < 600, 24 + 2 * ((Parent.Width - 64) / 3 + 8), Parent.Width - 120)
+                  Y: =If(App.Width < 600, lblNomePac.Y + lblNomePac.Height + 8, 56)
+            - lblIdent:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =24
+                  PaddingLeft: =0
+                  Size: =If(App.Width < 600, 12, 13)
+                  Text: |-
+                    ="Leito " & gPaciente.Leito & "  ·  prontuário " & gPaciente.Prontuário & "  ·  doador " & gPaciente.'Tipo de doador'.Value &
+                    If(CountRows(gPaciente.Precaucao) = 0, "  ·  ISOLAMENTO NÃO AVALIADO",
+                       "Padrão" in gPaciente.Precaucao.Value, "  ·  precaução padrão",
+                       "  ·  PRECAUÇÃO: " & Upper(Concat(gPaciente.Precaucao, Value, " + ")) & If(gPaciente.PrecaucaoEmpirica, " (EMPÍRICO)", ""))
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, btnEditarPlano.Y + btnEditarPlano.Height + 10, 96)
+            - recA1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Height: =If(App.Width < 600, 76, 88)
+                  Width: =(Parent.Width - 84) / 4
+                  X: =24
+                  Y: =If(App.Width < 600, lblIdent.Y + lblIdent.Height + 12, 136)
+            - recA2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Height: =recA1.Height
+                  Width: =recA1.Width
+                  X: =recA1.X + recA1.Width + 12
+                  Y: =recA1.Y
+            - recA3:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Height: =recA1.Height
+                  Width: =recA1.Width
+                  X: =recA2.X + recA2.Width + 12
+                  Y: =recA1.Y
+            - recA4:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(240, 243, 246, 1)
+                  Height: =recA1.Height
+                  Width: =recA1.Width
+                  X: =recA3.X + recA3.Width + 12
+                  Y: =recA1.Y
+            - lblA1Num:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =If(App.Width < 600, 20, 24)
+                  Text: =DateDiff(gPaciente.'Data de admissão', Today(), TimeUnit.Days) & "d"
+                  Width: =recA1.Width
+                  X: =recA1.X
+                  Y: =If(App.Width < 600, recA1.Y + 8, recA1.Y + 12)
+            - lblA1Cap:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 24, 28)
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =12
+                  Text: ="internação"
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recA1.Width
+                  X: =recA1.X
+                  Y: =If(App.Width < 600, recA1.Y + 46, recA1.Y + 52)
+            - lblA2Num:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =If(App.Width < 600, 20, 24)
+                  Text: |-
+                    =If(IsBlank(gPaciente.'Data do transplante'), "—",
+                        With({t: gPaciente.'Data do transplante'},
+                            With({d: DateDiff(t, Today(), TimeUnit.Days), m: DateDiff(t, Today(), TimeUnit.Months) - If(Day(Today()) < Day(t), 1, 0)},
+                                If(m < 3, "D" & d,
+                                   m < 12, m & "m",
+                                   RoundDown(m / 12, 0) & "a" & If(Mod(m, 12) = 0, "", " " & Mod(m, 12) & "m")))))
+                  Width: =recA2.Width
+                  X: =recA2.X
+                  Y: =If(App.Width < 600, recA2.Y + 8, recA2.Y + 12)
+            - lblA2Cap:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 24, 28)
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =12
+                  Text: =If(App.Width < 600, "pós-Tx", "pós-transplante")
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recA2.Width
+                  X: =recA2.X
+                  Y: =If(App.Width < 600, recA2.Y + 46, recA2.Y + 52)
+            - lblA3Num:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =If(App.Width < 600, 20, 24)
+                  Text: |-
+                    =With({p: LookUp(TxPlano, PacienteRef.Id = gPaciente.ID)}, If(IsBlank(p.DataAlvoAltaOriginal), "—", Text(p.DataAlvoAltaOriginal, "dd/mm")))
+                  Width: =recA3.Width
+                  X: =recA3.X
+                  Y: =If(App.Width < 600, recA3.Y + 8, recA3.Y + 12)
+            - lblA3Cap:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 24, 28)
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =12
+                  Text: =If(App.Width < 600, "alvo orig.", "alvo original")
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recA3.Width
+                  X: =recA3.X
+                  Y: =If(App.Width < 600, recA3.Y + 46, recA3.Y + 52)
+            - lblA4Num:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =If(App.Width < 600, 20, 24)
+                  Text: |-
+                    =With({p: LookUp(TxPlano, PacienteRef.Id = gPaciente.ID)}, If(IsBlank(p.DataAlvoAltaAtual), "—", Text(p.DataAlvoAltaAtual, "dd/mm")))
+                  Width: =recA4.Width
+                  X: =recA4.X
+                  Y: =If(App.Width < 600, recA4.Y + 8, recA4.Y + 12)
+            - lblA4Cap:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =If(App.Width < 600, 24, 28)
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  Size: =12
+                  Text: ="alvo atual"
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recA4.Width
+                  X: =recA4.X
+                  Y: =If(App.Width < 600, recA4.Y + 46, recA4.Y + 52)
+            - btnCardAlvoAtual:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderThickness: =1
+                  Color: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Height: =recA4.Height
+                  HoverBorderColor: =RGBA(15, 109, 120, 1)
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(15, 109, 120, 0.06)
+                  OnSelect: |-
+                    =Set(gPDEdit, true);
+                    Set(gIrParaPlano, true);
+                    Navigate(scrPacienteDados)
+                  PressedBorderColor: =RGBA(15, 109, 120, 1)
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =RGBA(15, 109, 120, 0.12)
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Text: =""
+                  Tooltip: ="Editar o plano terapêutico"
+                  Width: =recA4.Width
+                  X: =recA4.X
+                  Y: =recA4.Y
+            - galAbas:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Horizontal_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Height: =48
+                  Items: =gCategorias
+                  ShowScrollbar: =false
+                  TemplateSize: =140
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, recA1.Y + recA1.Height + 12, 244)
+                Children:
+                  - lblAba:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(gCategoria = ThisItem.Value, RGBA(255, 255, 255, 1), RGBA(74, 91, 109, 1))
+                        Fill: =If(gCategoria = ThisItem.Value, RGBA(15, 109, 120, 1), RGBA(240, 243, 246, 1))
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =44
+                        OnSelect: =Set(gCategoria, ThisItem.Value); Set(gAnotacaoAtual, LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria)); Set(gSemAlt, !IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' = true); Set(gAnotacaoBase, If(!IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' <> true, gAnotacaoAtual, First(Sort(Filter(TxAnotacao, PacienteId = gPaciente.ID && Categoria.Value = gCategoria && 'Sem alteração desde o round anterior' = false), 'Data e hora', SortOrder.Descending)))); Set(gResetForm, true); Set(gResetForm, false)
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        Size: =12
+                        Text: =ThisItem.Value
+                        Width: =Parent.TemplateWidth - 6
+                        X: =3
+                        Y: =2
+            - lblBlocoTitulo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  PaddingLeft: =0
+                  Size: =15
+                  Text: ="Bloco de " & gCategoria
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, galAbas.Y + galAbas.Height + 12, 308)
+            - lblBaseInfo:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =App.Width < 600
+                  BorderColor: =RGBA(230, 162, 60, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(124, 63, 0, 1)
+                  Fill: =RGBA(255, 243, 224, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =36
+                  PaddingLeft: =12
+                  Size: =12
+                  Text: =If(!IsBlank(gAnotacaoBase) && gAnotacaoBase.RoundId <> gRound.ID, "Bloco de " & gCategoria & "  ·  dados trazidos da avaliação de " & Text(gAnotacaoBase.'Data e hora', "dd/mm/yyyy") & ". Revise, corrija o que mudou e grave, ou confirme sem alteração.", "")
+                  Visible: =!IsBlank(Self.Text)
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, lblBlocoTitulo.Y - 4, 304)
+            - btnSemAlteracao:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  DisabledFill: =RGBA(242, 242, 241, 0)
+                  Fill: =If(gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 118, 110, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(gCategoria = "Enfermagem" && CountRows(gPaciente.Precaucao) = 0,
+                        Notify("Registre a precaução no topo do bloco e clique em Gravar precauções antes de confirmar sem alteração.", NotificationType.Warning),
+                        Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)),
+                            {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title},
+                             RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria},
+                             'Sem alteração desde o round anterior': true, 'Data e hora': Now(), 'Autor é da categoria': (gCategoria = gMinhaCategoria)}));
+                        Set(gSemAlt, !IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' = true);
+                        Notify("Registrado sem alteração para " & gCategoria & ".", NotificationType.Success)); Select(btnPacAvancar)
+                  PressedBorderColor: =RGBA(0, 69, 120, 1)
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(16, 110, 190, 1)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Size: =14
+                  Text: |-
+                    =If(gSemAlt, "Confirmado: nada mudou", "Sem alteração desde o round anterior")
+                  Width: =Parent.Width - 48
+                  X: =24
+                  Y: =If(App.Width < 600, If(lblBaseInfo.Visible, lblBaseInfo.Y + lblBaseInfo.Height + 8, lblBlocoTitulo.Y + lblBlocoTitulo.Height + 8), 344)
+      - ctnNutricao:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Nutrição"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblNutAceitacaoVOCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Aceitação alimentar por via oral"
+            - ddNutAceitacaoVO:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Nut - aceitação alimentar por via oral'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Nut - aceitação alimentar por via oral')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblNutSuporteCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Suporte nutricional"
+            - ddNutSuporte:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Nut - suporte nutricional'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Nut - suporte nutricional')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblNutPeculiaridadesCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Peculiaridades da dieta"
+            - txtNutPeculiaridades:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Nut - peculiaridades da dieta'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblNutIntoleranciasCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Intolerâncias"
+            - cmbNutIntolerancias:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultSelectedItems: =gAnotacaoBase.'Nut - intolerâncias'
+                  DisplayFields: =["Value"]
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  IsSearchable: =false
+                  Items: =Choices(TxAnotacao.'Nut - intolerâncias')
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  SearchFields: =["Value"]
+            - lblObsNutricaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsNutricao:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarNutricao:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)), {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria}, 'Sem alteração desde o round anterior': false, 'Data e hora': Now(), 'Autor é da categoria': (gCategoria = gMinhaCategoria), 'Nut - aceitação alimentar por via oral': ddNutAceitacaoVO.Selected, 'Nut - suporte nutricional': ddNutSuporte.Selected, 'Nut - peculiaridades da dieta': txtNutPeculiaridades.Text, 'Nut - intolerâncias': cmbNutIntolerancias.SelectedItems, 'Observação da categoria': txtObsNutricao.Text}));
+                    Set(gSemAlt, false);
+                    Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success); If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro}))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Nutrição")
+      - ctnMedicina:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Medicina"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblMedPrevisaoEvolucaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Previsão de evolução (doador / TIF / cirurgia)"
+            - txtMedPrevisaoEvolucao:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Med - previsão de evolução (doador/TIF/cirurgia)'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblMedFuncaoEnxertoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Função do enxerto"
+            - ddMedFuncaoEnxerto:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Med - função do enxerto'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Med - função do enxerto')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblMedDopplerEnxertoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Doppler de enxerto"
+            - ddMedDopplerEnxerto:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Med - doppler de enxerto'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Med - doppler de enxerto')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblMedDJCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Cateter duplo J (" & CountRows(Filter(colDisp, Tipo.Value = "Cateter duplo J" && IsBlank(DataRetirada))) & " em uso, " & CountRows(Filter(colDisp, Tipo.Value = "Cateter duplo J" && !IsBlank(DataRetirada))) & " retirados)"
+            - lblMedDJVazio:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =28
+                  LayoutMinHeight: =28
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Nenhum duplo J registrado."
+                  Visible: =CountRows(Filter(colDisp, Tipo.Value = "Cateter duplo J")) = 0
+            - galMedDJ:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  BorderThickness: =1
+                  FillPortions: =0
+                  Height: =64 * Max(1, CountRows(Filter(colDisp, Tipo.Value = "Cateter duplo J")))
+                  Items: |-
+                    =SortByColumns(
+                        AddColumns(Filter(colDisp, Tipo.Value = "Cateter duplo J"), ordem, If(IsBlank(DataRetirada), 0, 1)),
+                        "ordem", SortOrder.Ascending,
+                        "DataInsercao", SortOrder.Ascending)
+                  LayoutMinHeight: =64 * Max(1, CountRows(Filter(colDisp, Tipo.Value = "Cateter duplo J")))
+                  OnSelect: |-
+                    =Set(gDispGrupo, "Med");
+                    Set(gDispEdit, LookUp(colDisp, ID = ThisItem.ID));
+                    Set(gMostrarDisp, true);
+                    Set(gResetDisp, true);
+                    Set(gResetDisp, false)
+                  ShowScrollbar: =false
+                  TemplateFill: =If(IsBlank(ThisItem.DataRetirada), RGBA(255, 255, 255, 1), RGBA(246, 247, 249, 1))
+                  TemplateSize: =64
+                  Visible: =CountRows(Filter(colDisp, Tipo.Value = "Cateter duplo J")) > 0
+                Children:
+                  - lblDJItemTitulo:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(IsBlank(ThisItem.DataRetirada), RGBA(22, 32, 43, 1), RGBA(150, 160, 170, 1))
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(IsBlank(ThisItem.DataRetirada), FontWeight.Semibold, FontWeight.Normal)
+                        Height: =24
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        Size: =12
+                        Text: ="Duplo J" & If(IsBlank(ThisItem.Local), "", " · " & ThisItem.Local) & If(IsBlank(ThisItem.DataRetirada), "", "  (retirado)")
+                        Width: =Parent.TemplateWidth - 240
+                        X: =12
+                        Y: =8
+                  - lblDJItemDetalhe:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(IsBlank(ThisItem.DataRetirada), RGBA(96, 110, 122, 1), RGBA(165, 173, 181, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =22
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        Size: =10
+                        Text: |-
+                          =If(IsBlank(ThisItem.DataInsercao), "Inserção sem data",
+                              If(IsBlank(ThisItem.DataRetirada), "D" & DateDiff(ThisItem.DataInsercao, Today(), TimeUnit.Days) & " · ", "") &
+                              "inserido em " & Text(ThisItem.DataInsercao, "dd/mm/yyyy")) &
+                          If(IsBlank(ThisItem.DataRetirada),
+                              If(IsBlank(ThisItem.PrevisaoRetirada), "", " · retirada prevista " & Text(ThisItem.PrevisaoRetirada, "dd/mm/yyyy")) &
+                              If(IsBlank(ThisItem.UltimaRevisao), "", " · revisto em " & Text(ThisItem.UltimaRevisao, "dd/mm")),
+                              " · retirado em " & Text(ThisItem.DataRetirada, "dd/mm/yyyy") &
+                              If(IsBlank(ThisItem.DataInsercao), "", " · " & DateDiff(ThisItem.DataInsercao, ThisItem.DataRetirada, TimeUnit.Days) & " dias de permanência"))
+                        Width: =Parent.TemplateWidth - 240
+                        X: =12
+                        Y: =34
+                  - lblDJItemSinal:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(Self.Text = "D60+ RETIRAR", RGBA(160, 43, 43, 1), RGBA(154, 114, 17, 1))
+                        Fill: =If(Self.Text = "D60+ RETIRAR", RGBA(251, 234, 234, 1), RGBA(251, 243, 223, 1))
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =26
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        Size: =10
+                        Text: |-
+                          =With({d: If(IsBlank(ThisItem.DataInsercao), -1, DateDiff(ThisItem.DataInsercao, Today(), TimeUnit.Days))},
+                              If(!IsBlank(ThisItem.DataRetirada), "",
+                                 d >= 60, "D60+ RETIRAR",
+                                 d >= 30, "RETIRAR ATÉ D60",
+                                 ""))
+                        Visible: =!IsBlank(Self.Text)
+                        Width: =210
+                        X: =Parent.TemplateWidth - Self.Width - 16
+                        Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                  - recDJItemSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 243, 246, 1)
+                        Height: =1
+                        OnSelect: =Select(Parent)
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - Self.Height
+            - btnMedDJNovo:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: |-
+                    =Set(gDispGrupo, "Med");
+                    Set(gDispEdit, Blank());
+                    Set(gMostrarDisp, true);
+                    Set(gResetDisp, true);
+                    Set(gResetDisp, false)
+                  Size: =12
+                  Text: ="+ Registrar duplo J"
+            - lblMedPrevisaoBiopsiaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Previsão de biópsia renal"
+            - tglMedPrevisaoBiopsia:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Med - previsão de biópsia renal'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblMedExamesPendentesCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Exames solicitados e pendentes"
+            - txtMedExamesPendentes:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Med - exames solicitados e pendentes'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblMedHipoteseAtivaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Hipótese diagnóstica ativa"
+            - txtMedHipoteseAtiva:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Med - hipótese diagnóstica ativa'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblMedInterconsultaPendenteCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Interconsulta sem resposta"
+            - tglMedInterconsultaPendente:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Med - interconsulta sem resposta'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblMedInterconsultaDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Qual interconsulta"
+                  Visible: =tglMedInterconsultaPendente.Value
+            - txtMedInterconsultaDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Med - qual interconsulta'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglMedInterconsultaPendente.Value
+            - lblObsMedicinaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsMedicina:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarMedicina:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)), {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria},
+                        'Sem alteração desde o round anterior': false,
+                        'Data e hora': Now(),
+                        'Autor é da categoria': (gCategoria = gMinhaCategoria),
+                        'Med - previsão de evolução (doador/TIF/cirurgia)': txtMedPrevisaoEvolucao.Text,
+                        'Med - função do enxerto': ddMedFuncaoEnxerto.Selected,
+                        'Med - doppler de enxerto': ddMedDopplerEnxerto.Selected,
+                        'Med - previsão de biópsia renal': tglMedPrevisaoBiopsia.Value,
+                        'Med - exames solicitados e pendentes': txtMedExamesPendentes.Text,
+                        'Med - hipótese diagnóstica ativa': txtMedHipoteseAtiva.Text,
+                        'Med - interconsulta sem resposta': tglMedInterconsultaPendente.Value,
+                        'Med - qual interconsulta': txtMedInterconsultaDetalhe.Text,
+                        'Observação da categoria': txtObsMedicina.Text}));
+                    Set(gSemAlt, false);
+                    Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success); If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro}))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Medicina")
+      - ctnEnfermagem:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Enfermagem"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblEnfPrecCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Precaução (obrigatório: Padrão, ou uma ou mais adicionais)"
+            - cmbEnfPrecaucao:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultSelectedItems: =gPaciente.Precaucao
+                  DisplayFields: =["Value"]
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  IsSearchable: =false
+                  Items: =Choices(TxPaciente.Precaucao)
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  SearchFields: =["Value"]
+            - lblEnfPrecEmpiricaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Contato empírico, aguardando culturas"
+                  Visible: ="Contato" in cmbEnfPrecaucao.SelectedItems.Value
+            - tglEnfPrecEmpirica:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gPaciente.PrecaucaoEmpirica
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+                  Visible: ="Contato" in cmbEnfPrecaucao.SelectedItems.Value
+            - lblEnfUltimoSwabCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data da última coleta de swab"
+            - dtpEnfUltimoSwab:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =gPaciente.UltimoSwab
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  Size: =12
+            - lblEnfSwabSituacao:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: |-
+                    =With({a: gPaciente.'Data de admissão', t: DateAdd(Today(), -(Weekday(Today(), StartOfWeek.Tuesday) - 1), TimeUnit.Days)},
+                    With({u: If(gPaciente.UltimoSwab >= a, gPaciente.UltimoSwab)},
+                        If("Contato" in gPaciente.Precaucao.Value && !gPaciente.PrecaucaoEmpirica, RGBA(96, 94, 92, 1),
+                           IsBlank(u) && DateDiff(a, Today(), TimeUnit.Days) < 2, RGBA(96, 94, 92, 1),
+                           IsBlank(u) || (a <= t && DateDiff(u, t, TimeUnit.Days) >= 2), RGBA(154, 114, 17, 1),
+                           RGBA(44, 110, 73, 1))))
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =24
+                  LayoutMinHeight: =24
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    =With({a: gPaciente.'Data de admissão', t: DateAdd(Today(), -(Weekday(Today(), StartOfWeek.Tuesday) - 1), TimeUnit.Days)},
+                    With({u: If(gPaciente.UltimoSwab >= a, gPaciente.UltimoSwab),
+                          obs: If(!IsBlank(gPaciente.UltimoSwab) && gPaciente.UltimoSwab < a, " (a data gravada, " & Text(gPaciente.UltimoSwab, "dd/mm") & ", é anterior à internação)", "")},
+                        If("Contato" in gPaciente.Precaucao.Value && !gPaciente.PrecaucaoEmpirica, "Dispensado da vigilância semanal: precaução de contato estabelecida",
+                           IsBlank(u) && DateDiff(a, Today(), TimeUnit.Days) >= 2, "Swab admissional não registrado" & obs,
+                           IsBlank(u), "Swab admissional: coletar em até 24 h da internação" & obs,
+                           a <= t && DateDiff(u, t, TimeUnit.Days) >= 2, If(t = Today(), "Vigilância de terça: coletar hoje até 14 h", "Swab vencido: faltou a coleta de terça " & Text(t, "dd/mm")),
+                           "Swab em dia: última coleta em " & Text(u, "dd/mm"))))
+            - btnEnfPrecGravar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: |-
+                    =With({s: Filter(cmbEnfPrecaucao.SelectedItems, !IsBlank(Value))},
+                        If(CountRows(s) = 0,
+                            Notify("Marque a precaução. Sem precaução adicional, marque Padrão.", NotificationType.Warning),
+                           "Padrão" in s.Value && CountRows(s) > 1,
+                            Notify("Padrão não combina com Contato, Gotículas ou Aerossóis. Desmarque uma das opções.", NotificationType.Warning),
+                           Set(gPaciente, Patch(TxPaciente, LookUp(TxPaciente, ID = gPaciente.ID),
+                                {Precaucao: s,
+                                 PrecaucaoEmpirica: tglEnfPrecEmpirica.Value && ("Contato" in s.Value),
+                                 UltimoSwab: dtpEnfUltimoSwab.SelectedDate}));
+                            Notify("Precauções gravadas.", NotificationType.Success)))
+                  Size: =12
+                  Text: ="Gravar precauções"
+            - recEnfPrecSep:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(226, 232, 238, 1)
+                  Height: =1
+                  LayoutMinHeight: =1
+            - lblEnfAlteracaoSinaisVitaisCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Alteração de sinais vitais ou HGT"
+            - tglEnfAlteracaoSinaisVitais:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Enf - alteração de sinais vitais ou HGT'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblEnfFeridasDrenosCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Feridas e drenos"
+            - txtEnfFeridasDrenos:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Enf - feridas e drenos'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblEnfMaterialEstomaterapiaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Material específico ou estomaterapia"
+            - tglEnfMaterialEstomaterapia:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Enf - material específico ou estomaterapia'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblEnfMaterialDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Qual material"
+                  Visible: =tglEnfMaterialEstomaterapia.Value
+            - txtEnfMaterialDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Enf - qual material'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglEnfMaterialEstomaterapia.Value
+            - lblEnfDispCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Acessos e dispositivos (" & CountRows(Filter(colDisp, Tipo.Value <> "Cateter duplo J" && IsBlank(DataRetirada))) & " em uso, " & CountRows(Filter(colDisp, Tipo.Value <> "Cateter duplo J" && !IsBlank(DataRetirada))) & " retirados)"
+            - lblEnfDispVazio:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =28
+                  LayoutMinHeight: =28
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Nenhum dispositivo registrado."
+                  Visible: =CountRows(Filter(colDisp, Tipo.Value <> "Cateter duplo J")) = 0
+            - galEnfDispositivos:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  BorderThickness: =1
+                  FillPortions: =0
+                  Height: =64 * Max(1, CountRows(Filter(colDisp, Tipo.Value <> "Cateter duplo J")))
+                  Items: |-
+                    =SortByColumns(
+                        AddColumns(Filter(colDisp, Tipo.Value <> "Cateter duplo J"), ordem, If(IsBlank(DataRetirada), 0, 1)),
+                        "ordem", SortOrder.Ascending,
+                        "DataInsercao", SortOrder.Ascending)
+                  LayoutMinHeight: =64 * Max(1, CountRows(Filter(colDisp, Tipo.Value <> "Cateter duplo J")))
+                  OnSelect: |-
+                    =Set(gDispGrupo, "Enf");
+                    Set(gDispEdit, LookUp(colDisp, ID = ThisItem.ID));
+                    Set(gMostrarDisp, true);
+                    Set(gResetDisp, true);
+                    Set(gResetDisp, false)
+                  ShowScrollbar: =false
+                  TemplateFill: =If(IsBlank(ThisItem.DataRetirada), RGBA(255, 255, 255, 1), RGBA(246, 247, 249, 1))
+                  TemplateSize: =64
+                  Visible: =CountRows(Filter(colDisp, Tipo.Value <> "Cateter duplo J")) > 0
+                Children:
+                  - lblDispItemTitulo:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(IsBlank(ThisItem.DataRetirada), RGBA(22, 32, 43, 1), RGBA(150, 160, 170, 1))
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(IsBlank(ThisItem.DataRetirada), FontWeight.Semibold, FontWeight.Normal)
+                        Height: =24
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        Size: =12
+                        Text: =ThisItem.Tipo.Value & If(IsBlank(ThisItem.Local), "", " · " & ThisItem.Local) & If(IsBlank(ThisItem.DataRetirada), "", "  (retirado)")
+                        Width: =Parent.TemplateWidth - 240
+                        X: =12
+                        Y: =8
+                  - lblDispItemDetalhe:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(IsBlank(ThisItem.DataRetirada), RGBA(96, 110, 122, 1), RGBA(165, 173, 181, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =22
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        Size: =10
+                        Text: |-
+                          =If(IsBlank(ThisItem.DataInsercao), "Inserção sem data",
+                              If(IsBlank(ThisItem.DataRetirada), "D" & DateDiff(ThisItem.DataInsercao, Today(), TimeUnit.Days) & " · ", "") &
+                              "inserido em " & Text(ThisItem.DataInsercao, "dd/mm/yyyy")) &
+                          If(IsBlank(ThisItem.DataRetirada),
+                              If(IsBlank(ThisItem.PrevisaoRetirada), "", " · retirada prevista " & Text(ThisItem.PrevisaoRetirada, "dd/mm/yyyy")) &
+                              If(IsBlank(ThisItem.UltimaRevisao), "", " · revisto em " & Text(ThisItem.UltimaRevisao, "dd/mm")),
+                              " · retirado em " & Text(ThisItem.DataRetirada, "dd/mm/yyyy") &
+                              If(IsBlank(ThisItem.DataInsercao), "", " · " & DateDiff(ThisItem.DataInsercao, ThisItem.DataRetirada, TimeUnit.Days) & " dias de permanência"))
+                        Width: =Parent.TemplateWidth - 240
+                        X: =12
+                        Y: =34
+                  - lblDispItemSinal:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =If(Self.Text = "FLOGOSE", RGBA(160, 43, 43, 1), RGBA(154, 114, 17, 1))
+                        Fill: =If(Self.Text = "FLOGOSE", RGBA(251, 234, 234, 1), RGBA(251, 243, 223, 1))
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =26
+                        OnSelect: =Select(Parent)
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        Size: =10
+                        Text: |-
+                          =With({d: If(IsBlank(ThisItem.DataInsercao), -1, DateDiff(ThisItem.DataInsercao, Today(), TimeUnit.Days)),
+                                 t: ThisItem.Tipo.Value},
+                              If(!IsBlank(ThisItem.DataRetirada), "",
+                                 ThisItem.SinaisFlogisticos, "FLOGOSE",
+                                 t = "Acesso periférico" && d >= 4, "96 H: AVALIAR",
+                                 (t = "CVC" || t = "Cateter de HD temporário") && d >= 7, "D7+: REVISAR NECESSIDADE",
+                                 !IsBlank(ThisItem.PrevisaoRetirada) && ThisItem.PrevisaoRetirada < Today(), "RETIRADA VENCIDA",
+                                 ""))
+                        Visible: =!IsBlank(Self.Text)
+                        Width: =210
+                        X: =Parent.TemplateWidth - Self.Width - 16
+                        Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                  - recDispItemSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 243, 246, 1)
+                        Height: =1
+                        OnSelect: =Select(Parent)
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - Self.Height
+            - btnEnfDispNovo:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(15, 109, 120, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(15, 109, 120, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(15, 109, 120, 1)
+                  OnSelect: |-
+                    =Set(gDispGrupo, "Enf");
+                    Set(gDispEdit, Blank());
+                    Set(gMostrarDisp, true);
+                    Set(gResetDisp, true);
+                    Set(gResetDisp, false)
+                  Size: =12
+                  Text: ="+ Adicionar dispositivo"
+            - lblEnfCompreensaoAdesaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Compreensão e adesão"
+            - ddEnfCompreensaoAdesao:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Enf - compreensão e adesão'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Enf - compreensão e adesão')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblEnfRiscoLPPQuedaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Risco"
+            - cmbEnfRiscoLPPQueda:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultSelectedItems: =gAnotacaoBase.'Enf - risco'
+                  DisplayFields: =["Value"]
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  IsSearchable: =false
+                  Items: =Choices(TxAnotacao.'Enf - risco')
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  SearchFields: =["Value"]
+            - lblEnfAutocuidadoAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Treinamento de autocuidado"
+            - ddEnfAutocuidadoAlta:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Enf - treinamento de autocuidado'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Enf - treinamento de autocuidado')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblEnfDispositivosRetirarAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Dispositivos a retirar antes da alta"
+            - txtEnfDispositivosRetirarAlta:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Enf - dispositivos a retirar antes da alta'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblObsEnfermagemCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsEnfermagem:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarEnfermagem:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =If(CountRows(gPaciente.Precaucao) = 0,
+                        Notify("Registre a precaução no topo do bloco e clique em Gravar precauções antes de gravar o bloco.", NotificationType.Warning),
+                        Set(gAnotacaoAtual, Patch(TxAnotacao,
+                            Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)),
+                            {Title: gPaciente.Title & " · " & gCategoria,
+                             RoundRef: {Id: gRound.ID, Value: gRound.Title},
+                             PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID,
+                             Categoria: {Value: gCategoria},
+                             'Sem alteração desde o round anterior': false,
+                             'Data e hora': Now(),
+                             'Autor é da categoria': (gCategoria = gMinhaCategoria),
+                             'Enf - alteração de sinais vitais ou HGT': tglEnfAlteracaoSinaisVitais.Value,
+                             'Enf - feridas e drenos': txtEnfFeridasDrenos.Text,
+                             'Enf - material específico ou estomaterapia': tglEnfMaterialEstomaterapia.Value,
+                             'Enf - qual material': txtEnfMaterialDetalhe.Text,
+                             'Enf - compreensão e adesão': ddEnfCompreensaoAdesao.Selected,
+                             'Enf - risco': cmbEnfRiscoLPPQueda.SelectedItems,
+                             'Enf - treinamento de autocuidado': ddEnfAutocuidadoAlta.Selected,
+                             'Enf - dispositivos a retirar antes da alta': txtEnfDispositivosRetirarAlta.Text,
+                             'Observação da categoria': txtObsEnfermagem.Text}));
+                        Set(gSemAlt, false);
+                        Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success);
+                        If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro})))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Enfermagem")
+      - ctnFarmacia:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Farmácia Clínica"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblFarInteracaoCriticaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Interação crítica identificada"
+            - tglFarInteracaoCritica:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Far - interação crítica identificada'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblFarInteracaoDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Qual interação"
+                  Visible: =tglFarInteracaoCritica.Value
+            - txtFarInteracaoDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - qual interação'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglFarInteracaoCritica.Value
+            - lblFarISSNoAlvoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Nível dos imunossupressores"
+            - ddFarISSNoAlvo:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - nível dos imunossupressores'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Far - nível dos imunossupressores')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFarISSMotivoForaAlvoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Motivo do nível fora do alvo"
+                  Visible: =ddFarISSNoAlvo.Selected.Value = "Fora do alvo"
+            - txtFarISSMotivoForaAlvo:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - motivo do nível fora do alvo'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =ddFarISSNoAlvo.Selected.Value = "Fora do alvo"
+            - lblFarISSHorarioTomadaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Horário de tomada"
+            - txtFarISSHorarioTomada:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - horário de tomada'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFarProfilaxiaBactrimCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Profilaxia Bactrim"
+            - ddFarProfilaxiaBactrim:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - profilaxia Bactrim'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Far - profilaxia Bactrim')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFarProfilaxiaGanciclovirCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Profilaxia Ganciclovir"
+            - ddFarProfilaxiaGanciclovir:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - profilaxia Ganciclovir'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Far - profilaxia Ganciclovir')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFarAjusteFuncaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Ajuste para função renal ou hepática"
+            - tglFarAjusteFuncao:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Far - ajuste para função renal ou hepática'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblFarAjusteMedicacaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Qual medicação ajustada"
+                  Visible: =tglFarAjusteFuncao.Value
+            - txtFarAjusteMedicacao:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - qual medicação ajustada'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglFarAjusteFuncao.Value
+            - lblFarMedicacaoPosAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Medicação pós-alta"
+            - ddFarMedicacaoPosAlta:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - medicação pós-alta'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Far - medicação pós-alta')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFarViaObtencaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Via de obtenção pós-alta"
+            - txtFarViaObtencao:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Far - via de obtenção pós-alta'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFarOrientacaoAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Orientação farmacêutica de alta"
+            - tglFarOrientacaoAlta:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Far - orientação farmacêutica de alta'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblObsFarmaciaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsFarmacia:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarFarmacia:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)), {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria}, 'Sem alteração desde o round anterior': false, 'Data e hora': Now(), 'Autor é da categoria': (gCategoria = gMinhaCategoria), 'Far - interação crítica identificada': tglFarInteracaoCritica.Value, 'Far - qual interação': txtFarInteracaoDetalhe.Text, 'Far - nível dos imunossupressores': ddFarISSNoAlvo.Selected, 'Far - motivo do nível fora do alvo': txtFarISSMotivoForaAlvo.Text, 'Far - horário de tomada': txtFarISSHorarioTomada.Text, 'Far - profilaxia Bactrim': ddFarProfilaxiaBactrim.Selected, 'Far - profilaxia Ganciclovir': ddFarProfilaxiaGanciclovir.Selected, 'Far - ajuste para função renal ou hepática': tglFarAjusteFuncao.Value, 'Far - qual medicação ajustada': txtFarAjusteMedicacao.Text, 'Far - medicação pós-alta': ddFarMedicacaoPosAlta.Selected, 'Far - via de obtenção pós-alta': txtFarViaObtencao.Text, 'Far - orientação farmacêutica de alta': tglFarOrientacaoAlta.Value, 'Observação da categoria': txtObsFarmacia.Text}));
+                    Set(gSemAlt, false);
+                    Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success); If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro}))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Farmácia Clínica")
+      - ctnFisioterapia:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Fisioterapia"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblFisCapacidadeFuncionalCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Capacidade funcional"
+            - ddFisCapacidadeFuncional:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Fis - capacidade funcional'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Fis - capacidade funcional')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFisStatusRespiratorioCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Status respiratório"
+            - ddFisStatusRespiratorio:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Fis - status respiratório'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Fis - status respiratório')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFisO2LitrosCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Oxigênio (L/min)"
+                  Visible: =ddFisStatusRespiratorio.Selected.Value = "Oxigênio suplementar"
+            - txtFisO2Litros:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Fis - oxigênio (L/min)'
+                  Font: =Font.'Segoe UI'
+                  Format: =TextFormat.Number
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =ddFisStatusRespiratorio.Selected.Value = "Oxigênio suplementar"
+            - lblFisPadraoMuscularCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Padrão muscular"
+            - ddFisPadraoMuscular:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Fis - padrão muscular'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Fis - padrão muscular')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFisFocoTratamentoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Foco do tratamento"
+            - cmbFisFocoTratamento:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultSelectedItems: =gAnotacaoBase.'Fis - foco do tratamento'
+                  DisplayFields: =["Value"]
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  IsSearchable: =false
+                  Items: =Choices(TxAnotacao.'Fis - foco do tratamento')
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  SearchFields: =["Value"]
+            - lblFisMetaFuncionalAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Meta funcional para a alta"
+            - txtFisMetaFuncionalAlta:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Fis - meta funcional para a alta'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+            - lblFisReabilitacaoPosAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Reabilitação após a alta"
+            - tglFisReabilitacaoPosAlta:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Fis - reabilitação após a alta'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblObsFisioterapiaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsFisioterapia:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarFisioterapia:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)), {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria}, 'Sem alteração desde o round anterior': false, 'Data e hora': Now(), 'Autor é da categoria': (gCategoria = gMinhaCategoria), 'Fis - capacidade funcional': ddFisCapacidadeFuncional.Selected, 'Fis - status respiratório': ddFisStatusRespiratorio.Selected, 'Fis - oxigênio (L/min)': Value(txtFisO2Litros.Text), 'Fis - padrão muscular': ddFisPadraoMuscular.Selected, 'Fis - foco do tratamento': cmbFisFocoTratamento.SelectedItems, 'Fis - meta funcional para a alta': txtFisMetaFuncionalAlta.Text, 'Fis - reabilitação após a alta': tglFisReabilitacaoPosAlta.Value, 'Observação da categoria': txtObsFisioterapia.Text}));
+                    Set(gSemAlt, false);
+                    Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success); If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro}))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Fisioterapia")
+      - ctnServicoSocial:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Serviço Social"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblSocRedeApoioCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Rede de apoio e cuidador"
+            - ddSocRedeApoio:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - rede de apoio e cuidador'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Soc - rede de apoio e cuidador')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblSocEscalaCuidadoresCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Escala de cuidadores"
+            - ddSocEscalaCuidadores:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - escala de cuidadores'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Soc - escala de cuidadores')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblSocSobrecargaConflitoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Sobrecarga ou conflito familiar"
+            - tglSocSobrecargaConflito:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Soc - sobrecarga ou conflito familiar'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblSocSobrecargaDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Detalhe da sobrecarga"
+                  Visible: =tglSocSobrecargaConflito.Value
+            - txtSocSobrecargaDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - detalhe da sobrecarga'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglSocSobrecargaConflito.Value
+            - lblSocTransporteTFDCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Transporte e TFD"
+            - ddSocTransporteTFD:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - transporte e TFD'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Soc - transporte e TFD')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblSocAuxiliosPendentesCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Auxílios previdenciários pendentes"
+            - tglSocAuxiliosPendentes:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Soc - auxílios previdenciários pendentes'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblSocAuxiliosDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Quais auxílios"
+                  Visible: =tglSocAuxiliosPendentes.Value
+            - txtSocAuxiliosDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - quais auxílios'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglSocAuxiliosPendentes.Value
+            - lblSocMoradiaCompativelCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Moradia compatível com o pós-Tx"
+            - ddSocMoradiaCompativel:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - moradia compatível com o pós-Tx'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Soc - moradia compatível com o pós-Tx')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblSocMunicipioOrigemCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Município de residência"
+            - txtSocMunicipioOrigem:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - município de residência'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+            - lblSocContrarreferenciaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Contrarreferência"
+            - ddSocContrarreferencia:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Soc - contrarreferência'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Soc - contrarreferência')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblObsServicoSocialCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsServicoSocial:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarServicoSocial:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)), {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria}, 'Sem alteração desde o round anterior': false, 'Data e hora': Now(), 'Autor é da categoria': (gCategoria = gMinhaCategoria), 'Soc - rede de apoio e cuidador': ddSocRedeApoio.Selected, 'Soc - escala de cuidadores': ddSocEscalaCuidadores.Selected, 'Soc - sobrecarga ou conflito familiar': tglSocSobrecargaConflito.Value, 'Soc - detalhe da sobrecarga': txtSocSobrecargaDetalhe.Text, 'Soc - transporte e TFD': ddSocTransporteTFD.Selected, 'Soc - auxílios previdenciários pendentes': tglSocAuxiliosPendentes.Value, 'Soc - quais auxílios': txtSocAuxiliosDetalhe.Text, 'Soc - moradia compatível com o pós-Tx': ddSocMoradiaCompativel.Selected, 'Soc - município de residência': txtSocMunicipioOrigem.Text, 'Soc - contrarreferência': ddSocContrarreferencia.Selected, 'Observação da categoria': txtObsServicoSocial.Text}));
+                    Set(gSemAlt, false);
+                    Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success); If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro}))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Serviço Social")
+      - ctnPsicologia:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Psicologia"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblPsiCompreensaoTratamentoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Compreensão do tratamento"
+            - ddPsiCompreensaoTratamento:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Psi - compreensão do tratamento'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Psi - compreensão do tratamento')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblPsiRiscoAdesaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Risco de adesão"
+            - ddPsiRiscoAdesao:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Psi - risco de adesão'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Psi - risco de adesão')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblPsiSofrimentoPsiquicoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Sofrimento psíquico relevante"
+            - tglPsiSofrimentoPsiquico:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Psi - sofrimento psíquico relevante'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblPsiSofrimentoDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Detalhe do sofrimento"
+                  Visible: =tglPsiSofrimentoPsiquico.Value
+            - txtPsiSofrimentoDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Psi - detalhe do sofrimento'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =tglPsiSofrimentoPsiquico.Value
+            - lblPsiCapacidadeAutocuidadoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Capacidade de autocuidado pós-alta"
+            - ddPsiCapacidadeAutocuidado:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Psi - capacidade de autocuidado pós-alta'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'Psi - capacidade de autocuidado pós-alta')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblPsiAcompanhamentoPosAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Acompanhamento após a alta"
+            - tglPsiAcompanhamentoPosAlta:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gAnotacaoBase.'Psi - acompanhamento após a alta'
+                  Height: =40
+                  LayoutMinHeight: =40
+                  Reset: =gResetForm
+            - lblObsPsicologiaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsPsicologia:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - btnGravarPsicologia:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =Set(gAnotacaoAtual, Patch(TxAnotacao, Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)), {Title: gPaciente.Title & " · " & gCategoria, RoundRef: {Id: gRound.ID, Value: gRound.Title}, PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title}, RoundId: gRound.ID, PacienteId: gPaciente.ID, Categoria: {Value: gCategoria}, 'Sem alteração desde o round anterior': false, 'Data e hora': Now(), 'Autor é da categoria': (gCategoria = gMinhaCategoria), 'Psi - compreensão do tratamento': ddPsiCompreensaoTratamento.Selected, 'Psi - risco de adesão': ddPsiRiscoAdesao.Selected, 'Psi - sofrimento psíquico relevante': tglPsiSofrimentoPsiquico.Value, 'Psi - detalhe do sofrimento': txtPsiSofrimentoDetalhe.Text, 'Psi - capacidade de autocuidado pós-alta': ddPsiCapacidadeAutocuidado.Selected, 'Psi - acompanhamento após a alta': tglPsiAcompanhamentoPosAlta.Value, 'Observação da categoria': txtObsPsicologia.Text}));
+                    Set(gSemAlt, false);
+                    Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success); If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro}))); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Psicologia")
+      - ctnTerapiaOcupacional:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - Self.Y - 8
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =12
+            PaddingRight: =12
+            PaddingTop: =4
+            Visible: =gCategoria = "Terapia Ocupacional"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =ctnCabecalho.Height + 8
+          Children:
+            - lblTOAvdCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Atividades de vida diária (AVD)"
+            - ddTOAvd:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'TO - AVD'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'TO - AVD')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblTOAlteracaoCognitivaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Alteração de componente cognitivo"
+            - ddTOAlteracaoCognitiva:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'TO - alteração de componente cognitivo'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'TO - alteração de componente cognitivo')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblTOCognitivoDetalheCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Qual alteração cognitiva?"
+                  Visible: =ddTOAlteracaoCognitiva.Selected.Value = "Sim"
+            - txtTOCognitivoDetalhe:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'TO - qual alteração cognitiva'
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =ddTOAlteracaoCognitiva.Selected.Value = "Sim"
+            - lblTOOrientacoesCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Orientações"
+            - cmbTOOrientacoes:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultSelectedItems: =gAnotacaoBase.'TO - orientações'
+                  DisplayFields: =["Value"]
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  IsSearchable: =false
+                  Items: =Choices(TxAnotacao.'TO - orientações')
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  SearchFields: =["Value"]
+            - lblTOOrientacoesOutrosCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Quais outras orientações?"
+                  Visible: ="Outros" in cmbTOOrientacoes.SelectedItems.Value
+            - txtTOOrientacoesOutros:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.TOOrientacoesOutros
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: ="Outros" in cmbTOOrientacoes.SelectedItems.Value
+            - lblTOReabilitacaoAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Reabilitação na alta"
+            - ddTOReabilitacaoAlta:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'TO - reabilitação na alta'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'TO - reabilitação na alta')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblTODispositivoMarchaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Dispositivo auxiliar de marcha"
+            - ddTODispositivoMarcha:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'TO - dispositivo auxiliar de marcha'.Value
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxAnotacao.'TO - dispositivo auxiliar de marcha')
+                  Items.Value: =Value
+                  Reset: =gResetForm
+                  Size: =12
+            - lblTODispositivoMarchaOutroCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Qual dispositivo de marcha?"
+                  Visible: =ddTODispositivoMarcha.Selected.Value = "Outros"
+            - txtTODispositivoMarchaOutro:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.TODispositivoMarchaOutro
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: =ddTODispositivoMarcha.Selected.Value = "Outros"
+            - lblTODispositivoAltaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Prescrição de dispositivo na alta"
+            - cmbTODispositivoAlta:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultSelectedItems: =gAnotacaoBase.'TO - prescrição de dispositivo na alta'
+                  DisplayFields: =["Value"]
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  IsSearchable: =false
+                  Items: =Choices(TxAnotacao.'TO - prescrição de dispositivo na alta')
+                  LayoutMinHeight: =44
+                  Reset: =gResetForm
+                  SearchFields: =["Value"]
+            - lblTOPrescricaoOutrosCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Quais outras prescrições?"
+                  Visible: ="Outros" in cmbTODispositivoAlta.SelectedItems.Value
+            - txtTOPrescricaoOutros:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.TOPrescricaoOutros
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetForm
+                  Size: =12
+                  Visible: ="Outros" in cmbTODispositivoAlta.SelectedItems.Value
+            - lblObsTerapiaOcupacionalCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Observação da categoria"
+            - txtObsTerapiaOcupacional:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gAnotacaoBase.'Observação da categoria'
+                  Font: =Font.'Segoe UI'
+                  Height: =84
+                  HintText: ="Escreva aqui"
+                  LayoutMinHeight: =84
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetForm
+                  Size: =12
+            - lblTOFaltas:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(153, 27, 27, 1)
+                  Fill: =RGBA(254, 226, 226, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =72
+                  LayoutMinHeight: =72
+                  PaddingBottom: =8
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =8
+                  Size: =12
+                  Text: =gTOFaltas.m
+                  Visible: =gTOFaltas.p = gPaciente.ID && !IsBlank(gTOFaltas.m)
+            - btnGravarTerapiaOcupacional:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(21, 128, 61, 1), RGBA(255, 255, 255, 1))
+                  Fill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(220, 252, 231, 1), RGBA(15, 109, 120, 1))
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, RGBA(200, 240, 214, 1), RGBA(12, 90, 100, 1))
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =With({f: Concat(Filter(Table(
+                            {c: IsBlank(ddTOAvd.Selected.Value), t: "AVD"},
+                            {c: IsBlank(ddTOAlteracaoCognitiva.Selected.Value), t: "alteração de componente cognitivo"},
+                            {c: ddTOAlteracaoCognitiva.Selected.Value = "Sim" && IsBlank(Trim(txtTOCognitivoDetalhe.Text)), t: "qual alteração cognitiva"},
+                            {c: CountRows(Filter(cmbTOOrientacoes.SelectedItems, !IsBlank(Value))) = 0, t: "orientações"},
+                            {c: "Outros" in cmbTOOrientacoes.SelectedItems.Value && IsBlank(Trim(txtTOOrientacoesOutros.Text)), t: "quais outras orientações"},
+                            {c: "Não se aplica" in cmbTOOrientacoes.SelectedItems.Value && CountRows(Filter(cmbTOOrientacoes.SelectedItems, !IsBlank(Value))) > 1, t: "orientações (Não se aplica junto com outra opção)"},
+                            {c: IsBlank(ddTOReabilitacaoAlta.Selected.Value), t: "reabilitação na alta"},
+                            {c: IsBlank(ddTODispositivoMarcha.Selected.Value), t: "dispositivo auxiliar de marcha"},
+                            {c: ddTODispositivoMarcha.Selected.Value = "Outros" && IsBlank(Trim(txtTODispositivoMarchaOutro.Text)), t: "qual dispositivo de marcha"},
+                            {c: CountRows(Filter(cmbTODispositivoAlta.SelectedItems, !IsBlank(Value))) = 0, t: "prescrição de dispositivo na alta"},
+                            {c: "Outros" in cmbTODispositivoAlta.SelectedItems.Value && IsBlank(Trim(txtTOPrescricaoOutros.Text)), t: "quais outras prescrições"},
+                            {c: "Não se aplica" in cmbTODispositivoAlta.SelectedItems.Value && CountRows(Filter(cmbTODispositivoAlta.SelectedItems, !IsBlank(Value))) > 1, t: "prescrição (Não se aplica junto com outra opção)"}
+                        ), c), t, "; ")},
+                        If(!IsBlank(f),
+                            Set(gTOFaltas, {p: gPaciente.ID, m: "Não gravado. Falta preencher: " & f & "."}),
+                            Set(gTOFaltas, {p: gPaciente.ID, m: ""});
+                            Set(gAnotacaoAtual, Patch(TxAnotacao,
+                                Coalesce(LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria), Defaults(TxAnotacao)),
+                                {Title: gPaciente.Title & " · " & gCategoria,
+                                 RoundRef: {Id: gRound.ID, Value: gRound.Title},
+                                 PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title},
+                                 RoundId: gRound.ID, PacienteId: gPaciente.ID,
+                                 Categoria: {Value: gCategoria},
+                                 'Sem alteração desde o round anterior': false,
+                                 'Data e hora': Now(),
+                                 'Autor é da categoria': (gCategoria = gMinhaCategoria),
+                                 'TO - AVD': ddTOAvd.Selected,
+                                 'TO - alteração de componente cognitivo': ddTOAlteracaoCognitiva.Selected,
+                                 'TO - qual alteração cognitiva': If(ddTOAlteracaoCognitiva.Selected.Value = "Sim", txtTOCognitivoDetalhe.Text, ""),
+                                 'TO - orientações': Filter(cmbTOOrientacoes.SelectedItems, !IsBlank(Value)),
+                                 'TO - reabilitação na alta': ddTOReabilitacaoAlta.Selected,
+                                 'TO - dispositivo auxiliar de marcha': ddTODispositivoMarcha.Selected,
+                                 'TO - prescrição de dispositivo na alta': Filter(cmbTODispositivoAlta.SelectedItems, !IsBlank(Value)),
+                                 TOOrientacoesOutros: If("Outros" in cmbTOOrientacoes.SelectedItems.Value, txtTOOrientacoesOutros.Text, ""),
+                                 TODispositivoMarchaOutro: If(ddTODispositivoMarcha.Selected.Value = "Outros", txtTODispositivoMarchaOutro.Text, ""),
+                                 TOPrescricaoOutros: If("Outros" in cmbTODispositivoAlta.SelectedItems.Value, txtTOPrescricaoOutros.Text, ""),
+                                 'Observação da categoria': txtObsTerapiaOcupacional.Text}));
+                            Set(gSemAlt, false);
+                            Notify("Bloco de " & gCategoria & " gravado.", NotificationType.Success);
+                            If(!IsBlank(gMeuMembro) && !IsBlank(gAnotacaoAtual), Set(gAnotacaoAtual, Patch(TxAnotacao, gAnotacaoAtual, {AutorRegistro: gMeuMembro})))
+                        )
+                    ); Select(btnPacAvancar)
+                  Size: =14
+                  Text: =If(!IsBlank(gAnotacaoAtual) && !gSemAlt, "Bloco gravado" & If(IsBlank(gAnotacaoAtual.'Data e hora'), "", " às " & Text(gAnotacaoAtual.'Data e hora', DateTimeFormat.ShortTime)) & " · atualizar", "Gravar bloco de Terapia Ocupacional")
+      - recSaidaFundo:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.55)
+            Height: =Parent.Height
+            Visible: =gMostrarSaida
+            Width: =Parent.Width
+      - recSaidaCartao:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =440
+            Visible: =gMostrarSaida
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =140
+      - lblSaidaNome:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(96, 110, 122, 1)
+            Height: =24
+            Size: =11
+            Text: =gPaciente.Title & "  ·  leito " & gPaciente.Leito
+            Visible: =gMostrarSaida
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =198
+      - ddSaidaStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            AllowEmptySelection: =true
+            Height: =44
+            Items: =Filter(Choices(TxPaciente.Status), Value <> "Internado")
+            Items.Value: =Value
+            Reset: =gResetForm
+            Visible: =gMostrarSaida && gPaciente.Status.Value = "Internado"
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =278
+      - lblSaidaAviso:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(96, 110, 122, 1)
+            Height: =48
+            Size: =10
+            Text: ="O paciente sai do painel do round. A ação pode ser desfeita nesta mesma tela."
+            Visible: =gMostrarSaida && gPaciente.Status.Value = "Internado"
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =412
+      - btnReabrirInternacao:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(176, 96, 16, 1)
+            Height: =44
+            OnSelect: |-
+              =Set(gPaciente, Patch(TxPaciente, LookUp(TxPaciente, ID = gPaciente.ID), {Status: LookUp(Choices(TxPaciente.Status), Value = "Internado"), 'Data de saída': Blank()}));
+              Notify("Internação reaberta", NotificationType.Success);
+              Set(gMostrarSaida, false)
+            Size: =12
+            Text: ="Reabrir internação"
+            Visible: =gMostrarSaida && gPaciente.Status.Value <> "Internado"
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =288
+      - btnSaidaCancelar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(200, 210, 218, 1)
+            Color: =RGBA(96, 110, 122, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            OnSelect: =Set(gMostrarSaida, false)
+            Size: =11
+            Text: ="Cancelar"
+            Visible: =gMostrarSaida
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =518
+      - ctnDispEdicao:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =gMostrarDisp
+            Width: =Parent.Width
+          Children:
+            - recDispFundo:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recDispCartao:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =620
+                  Width: =720
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - Self.Height) / 2
+            - lblDispTitulo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: =If(IsBlank(gDispEdit), If(gDispGrupo = "Med", "Novo duplo J", "Novo dispositivo"), IsBlank(gDispEdit.DataRetirada), "Editar " & If(gDispGrupo = "Med", "duplo J", "dispositivo"), If(gDispGrupo = "Med", "Duplo J retirado", "Dispositivo retirado"))
+                  Width: =672
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 20
+            - lblDispPaciente:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =24
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: =gPaciente.Title & "  ·  leito " & gPaciente.Leito
+                  Width: =672
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 54
+            - lblDispTipoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Tipo"
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 96
+            - ddDispTipo:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =If(IsBlank(gDispEdit) && gDispGrupo = "Med", "Cateter duplo J", gDispEdit.Tipo.Value)
+                  Font: =Font.'Segoe UI'
+                  Items: =Filter(Choices(TxDispositivo.Tipo), If(gDispGrupo = "Med", Value = "Cateter duplo J", Value <> "Cateter duplo J"))
+                  Items.Value: =Value
+                  Reset: =gResetDisp
+                  Size: =12
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 120
+            - lblDispLocalCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: =If(gDispGrupo = "Med", "Local (lado, enxerto)", "Local (sítio e lado)")
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 96
+            - txtDispLocal:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gDispEdit.Local
+                  Font: =Font.'Segoe UI'
+                  HintText: =If(gDispGrupo = "Med", "Exemplo - enxerto em FID", "Exemplo - jugular interna D, MSE")
+                  Reset: =gResetDisp
+                  Size: =12
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 120
+            - lblDispInsercaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: =If(gDispGrupo = "Med", "Data de inserção (vem com a do transplante)", "Data de inserção")
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 176
+            - dtpDispInsercao:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =If(IsBlank(gDispEdit) && gDispGrupo = "Med", gPaciente.'Data do transplante', gDispEdit.DataInsercao)
+                  Font: =Font.'Segoe UI'
+                  Reset: =gResetDisp
+                  Size: =12
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 200
+            - lblDispPrevisaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Previsão de retirada"
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 176
+            - dtpDispPrevisao:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =gDispEdit.PrevisaoRetirada
+                  Font: =Font.'Segoe UI'
+                  Reset: =gResetDisp
+                  Size: =12
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 200
+            - lblDispFlogCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Sinais flogísticos"
+                  Visible: =gDispGrupo <> "Med"
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 256
+            - tglDispFlog:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gDispEdit.SinaisFlogisticos
+                  Height: =40
+                  Reset: =gResetDisp
+                  Visible: =gDispGrupo <> "Med"
+                  Width: =160
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 280
+            - lblDispNecCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="A necessidade se mantém"
+                  Visible: =gDispGrupo <> "Med"
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 256
+            - tglDispNec:
+                Control: Classic/Toggle@2.1.0
+                Properties:
+                  Default: =gDispEdit.NecessidadeMantida
+                  Height: =40
+                  Reset: =gResetDisp
+                  Visible: =gDispGrupo <> "Med"
+                  Width: =160
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 280
+            - lblDispJustCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Por que se mantém"
+                  Visible: =tglDispNec.Value && gDispGrupo <> "Med"
+                  Width: =672
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 336
+            - txtDispJust:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =gDispEdit.Justificativa
+                  Font: =Font.'Segoe UI'
+                  HintText: ="Escreva aqui"
+                  Reset: =gResetDisp
+                  Size: =12
+                  Visible: =tglDispNec.Value && gDispGrupo <> "Med"
+                  Width: =672
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 360
+            - btnDispGravar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(IsBlank(ddDispTipo.Selected.Value) || gSalvandoDisp, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(12, 90, 100, 1)
+                  OnSelect: |-
+                    =Set(gSalvandoDisp, true);
+                    ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+                    If(
+                        IsBlank(gDispEdit.DataRetirada) &&
+                        !IsBlank(LookUp(colDisp,
+                            ID <> Coalesce(gDispEdit.ID, -1) &&
+                            IsBlank(DataRetirada) &&
+                            Tipo.Value = ddDispTipo.Selected.Value &&
+                            Lower(Trim(Coalesce(Local, ""))) = Lower(Trim(txtDispLocal.Text)))),
+                        Notify("Já existe outro " & ddDispTipo.Selected.Value & " em uso" &
+                            If(IsBlank(Trim(txtDispLocal.Text)), " sem local informado", " em " & txtDispLocal.Text) &
+                            ". Informe o local para diferenciar.", NotificationType.Warning),
+                        Patch(TxDispositivo,
+                            If(IsBlank(gDispEdit), Defaults(TxDispositivo), LookUp(TxDispositivo, ID = gDispEdit.ID)),
+                            {Title: ddDispTipo.Selected.Value & " · " & gPaciente.Title,
+                             PacienteRef: {Id: gPaciente.ID, Value: gPaciente.Title},
+                             PacienteId: gPaciente.ID,
+                             Tipo: ddDispTipo.Selected,
+                             Local: Trim(txtDispLocal.Text),
+                             DataInsercao: dtpDispInsercao.SelectedDate,
+                             PrevisaoRetirada: dtpDispPrevisao.SelectedDate,
+                             SinaisFlogisticos: tglDispFlog.Value,
+                             NecessidadeMantida: tglDispNec.Value,
+                             Justificativa: If(tglDispNec.Value, txtDispJust.Text, ""),
+                             UltimaRevisao: Now()});
+                        ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+                        Set(gMostrarDisp, false);
+                        Notify("Dispositivo gravado.", NotificationType.Success)
+                    );
+                    Set(gSalvandoDisp, false)
+                  Size: =13
+                  Text: ="Gravar dispositivo"
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 424
+            - btnDispCancelar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(240, 243, 246, 1)
+                  OnSelect: =Set(gMostrarDisp, false)
+                  Size: =12
+                  Text: ="Cancelar"
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 424
+            - recDispSep:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(226, 232, 238, 1)
+                  Height: =1
+                  Visible: =!IsBlank(gDispEdit)
+                  Width: =672
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 492
+            - lblDispRetiradaCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(74, 91, 109, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Retirada do dispositivo"
+                  Visible: =!IsBlank(gDispEdit)
+                  Width: =672
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 508
+            - dtpDispRetirada:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  Reset: =gResetDisp
+                  Size: =12
+                  Visible: =!IsBlank(gDispEdit) && IsBlank(gDispEdit.DataRetirada)
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 532
+            - btnDispRetirar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: |-
+                    =If(IsBlank(dtpDispRetirada.SelectedDate) ||
+                        (!IsBlank(gDispEdit.DataInsercao) && dtpDispRetirada.SelectedDate < gDispEdit.DataInsercao),
+                        DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(176, 96, 16, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(150, 80, 12, 1)
+                  OnSelect: |-
+                    =Patch(TxDispositivo, LookUp(TxDispositivo, ID = gDispEdit.ID),
+                        {DataRetirada: dtpDispRetirada.SelectedDate, UltimaRevisao: Now()});
+                    ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+                    Set(gMostrarDisp, false);
+                    Notify("Retirada registrada. O dispositivo saiu da lista de em uso.", NotificationType.Success)
+                  Size: =12
+                  Text: ="Registrar retirada nesta data"
+                  Visible: =!IsBlank(gDispEdit) && IsBlank(gDispEdit.DataRetirada)
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 532
+            - lblDispRetiradoEm:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =12
+                  Text: ="Retirado em " & Text(gDispEdit.DataRetirada, "dd/mm/yyyy")
+                  Visible: =!IsBlank(gDispEdit) && !IsBlank(gDispEdit.DataRetirada)
+                  Width: =324
+                  X: =recDispCartao.X + 24
+                  Y: =recDispCartao.Y + 532
+            - btnDispDesfazer:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(176, 96, 16, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(176, 96, 16, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(176, 96, 16, 1)
+                  OnSelect: |-
+                    =ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+                    If(
+                        !IsBlank(LookUp(colDisp,
+                            ID <> gDispEdit.ID &&
+                            IsBlank(DataRetirada) &&
+                            Tipo.Value = gDispEdit.Tipo.Value &&
+                            Lower(Trim(Coalesce(Local, ""))) = Lower(Trim(Coalesce(gDispEdit.Local, ""))))),
+                        Notify("Já existe outro " & gDispEdit.Tipo.Value & " em uso no mesmo local. Corrija o local de um deles antes de desfazer.", NotificationType.Warning),
+                        Patch(TxDispositivo, LookUp(TxDispositivo, ID = gDispEdit.ID),
+                            {DataRetirada: Blank(), UltimaRevisao: Now()});
+                        ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+                        Set(gMostrarDisp, false);
+                        Notify("Retirada desfeita. O dispositivo voltou para em uso.", NotificationType.Success)
+                    )
+                  Size: =12
+                  Text: ="Desfazer retirada"
+                  Visible: =!IsBlank(gDispEdit) && !IsBlank(gDispEdit.DataRetirada)
+                  Width: =324
+                  X: =recDispCartao.X + 372
+                  Y: =recDispCartao.Y + 532
+      - btnSugPac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugPac);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug && !gMostrarDisp && !gMostrarSaida
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugPac:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoPac:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoPac:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloPac:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoPac.Width - 48
+                  X: =recSugCartaoPac.X + 24
+                  Y: =recSugCartaoPac.Y + 20
+            - lblSugInfoPac:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & " · " & gCategoria & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoPac.Width - 48
+                  X: =recSugCartaoPac.X + 24
+                  Y: =recSugCartaoPac.Y + 56
+            - txtSugPac:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoPac.Width - 48
+                  X: =recSugCartaoPac.X + 24
+                  Y: =recSugCartaoPac.Y + 108
+            - btnSugCancelarPac:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugPac);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoPac.Width - 56) / 2
+                  X: =recSugCartaoPac.X + 24
+                  Y: =recSugCartaoPac.Y + recSugCartaoPac.Height - 68
+            - btnSugEnviarPac:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugPac.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugPac.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name & " · " & gCategoria,
+                                    Sugestao: Trim(txtSugPac.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugPac);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoPac.Width - 56) / 2
+                  X: =recSugCartaoPac.X + 32 + (recSugCartaoPac.Width - 56) / 2
+                  Y: =recSugCartaoPac.Y + recSugCartaoPac.Height - 68
+      - lblSaidaTitulo:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(32, 54, 71, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =16
+            Text: ="Registrar saída/alta do paciente"
+            Visible: =gMostrarSaida
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =164
+      - lblSaidaStatusCap:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(32, 54, 71, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =38
+            Size: =11
+            Text: =If(gPaciente.Status.Value = "Internado", "Desfecho", "Saída/alta já registrada como " & gPaciente.Status.Value & " em " & Text(gPaciente.'Data de saída', DateTimeFormat.ShortDate))
+            Visible: =gMostrarSaida
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =238
+      - lblSaidaDataCap:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(32, 54, 71, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =11
+            Text: ="Data da saída/alta"
+            Visible: =gMostrarSaida && gPaciente.Status.Value = "Internado"
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =334
+      - dtpSaidaData:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            EndYear: =Year(Today())
+            Height: =44
+            Reset: =gResetForm
+            StartYear: =Year(Today()) - 1
+            Visible: =gMostrarSaida && gPaciente.Status.Value = "Internado"
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =358
+      - btnSaidaConfirmar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Color: =RGBA(255, 255, 255, 1)
+            DisplayMode: =If(IsBlank(ddSaidaStatus.Selected), DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(0, 95, 105, 1)
+            Height: =44
+            OnSelect: |-
+              =ClearCollect(colPendPac, Filter(TxPendencia, PacienteRef.Id = gPaciente.ID && Status.Value = "Aberta"));
+              Set(gPendCanc, CountRows(colPendPac));
+              Set(gPaciente, Patch(TxPaciente, LookUp(TxPaciente, ID = gPaciente.ID), {Status: ddSaidaStatus.Selected, 'Data de saída': dtpSaidaData.SelectedDate}));
+              ForAll(colPendPac, Patch(TxPendencia, ThisRecord, {Status: {Value: "Cancelada"}, 'Resolvida em': Now()}));
+              Notify("Saída/alta registrada. " & gPendCanc & " pendência(s) cancelada(s).", NotificationType.Success);
+              Set(gMostrarSaida, false)
+            Size: =12
+            Text: ="Confirmar saída/alta"
+            Visible: =gMostrarSaida && gPaciente.Status.Value = "Internado"
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =466
+      - btnPacAvancar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Height: =10
+            OnSelect: |-
+              =If(!gModoCoord && CountRows(colOrdem) > 0 && Index(colOrdem, gPosCoord).ID = gPaciente.ID && !IsBlank(gAnotacaoAtual) && DateDiff(gAnotacaoAtual.'Data e hora', Now(), TimeUnit.Seconds) < 30,
+                  If(gPosCoord < CountRows(colOrdem),
+                      Set(gPosCoord, gPosCoord + 1);
+                      Set(gPaciente, Index(colOrdem, gPosCoord));
+                      Set(gAnotacaoAtual, LookUp(TxAnotacao, RoundId = gRound.ID && PacienteId = gPaciente.ID && Categoria.Value = gCategoria));
+                      Set(gSemAlt, !IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' = true);
+                      Set(gAnotacaoBase, If(!IsBlank(gAnotacaoAtual) && gAnotacaoAtual.'Sem alteração desde o round anterior' <> true, gAnotacaoAtual, First(Sort(Filter(TxAnotacao, PacienteId = gPaciente.ID && Categoria.Value = gCategoria && 'Sem alteração desde o round anterior' = false), 'Data e hora', SortOrder.Descending))));
+                      ClearCollect(colDisp, Filter(TxDispositivo, PacienteId = gPaciente.ID));
+                      Set(gMostrarDisp, false);
+                      Set(gResetForm, true);
+                      Set(gResetForm, false);
+                      Notify("Próximo paciente: " & gPaciente.Title, NotificationType.Information),
+                      Notify("Você percorreu todos os pacientes.", NotificationType.Success);
+                      Navigate(scrPainel)
+                  )
+              )
+            Text: ="Avançar"
+            Visible: =false
+            Width: =10

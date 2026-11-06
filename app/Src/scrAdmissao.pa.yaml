@@ -1,0 +1,565 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrAdmissao:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =Set(gResetAdm, true);
+        Set(gResetAdm, false)
+    Children:
+      - lblAdmVoltar:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(15, 109, 120, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            OnSelect: =Navigate(scrInicio)
+            PaddingLeft: =0
+            Text: ="< Voltar ao início"
+            Width: =240
+            X: =24
+            Y: =20
+      - lblAdmTitulo:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 32, 43, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =34
+            PaddingLeft: =0
+            Size: =20
+            Text: ="Admitir paciente"
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =54
+      - lblAdmSub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(96, 94, 92, 1)
+            Font: =Font.'Segoe UI'
+            Height: =22
+            PaddingLeft: =0
+            Size: =11
+            Text: ="Cadastro do paciente e nascimento do plano terapêutico, numa gravação só."
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =88
+      - btnSugAdm:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 120, 212, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 120, 212, 1)
+            Fill: =RGBA(255, 255, 255, 0.95)
+            Font: =Font.'Segoe UI'
+            Height: =36
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 120, 212, 1)
+            OnSelect: |-
+              =Reset(txtSugAdm);
+              UpdateContext({locSug: true, locSugGrav: false})
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Size: =11
+            Text: ="Sugestão"
+            Tooltip: ="Deixe uma sugestão sobre esta tela"
+            Visible: =!locSug
+            Width: =120
+            X: =Parent.Width - 136
+            Y: =Parent.Height - 56
+      - ctnSugAdm:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Parent.Height
+            Visible: =locSug
+            Width: =Parent.Width
+          Children:
+            - recSugFundoAdm:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0.55)
+                  FocusedBorderThickness: =0
+                  Height: =Parent.Height
+                  Width: =Parent.Width
+            - recSugCartaoAdm:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderThickness: =0
+                  Height: =380
+                  Width: =Min(640, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(24, (Parent.Height - Self.Height) / 2)
+            - lblSugTituloAdm:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(32, 54, 71, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  PaddingLeft: =0
+                  Size: =16
+                  Text: ="Sugestão de melhoria"
+                  Width: =recSugCartaoAdm.Width - 48
+                  X: =recSugCartaoAdm.X + 24
+                  Y: =recSugCartaoAdm.Y + 20
+            - lblSugInfoAdm:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: |-
+                    ="Tela: " & App.ActiveScreen.Name & Char(10) & "Não inclua nome nem prontuário de paciente."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =recSugCartaoAdm.Width - 48
+                  X: =recSugCartaoAdm.X + 24
+                  Y: =recSugCartaoAdm.Y + 56
+            - txtSugAdm:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =170
+                  HintText: ="O que melhoraria nesta tela?"
+                  MaxLength: =1500
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Width: =recSugCartaoAdm.Width - 48
+                  X: =recSugCartaoAdm.X + 24
+                  Y: =recSugCartaoAdm.Y + 108
+            - btnSugCancelarAdm:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(200, 210, 218, 1)
+                  Color: =RGBA(96, 110, 122, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverColor: =RGBA(32, 54, 71, 1)
+                  HoverFill: =RGBA(242, 242, 241, 1)
+                  OnSelect: |-
+                    =Reset(txtSugAdm);
+                    UpdateContext({locSug: false, locSugGrav: false})
+                  Size: =11
+                  Text: ="Cancelar"
+                  Width: =(recSugCartaoAdm.Width - 56) / 2
+                  X: =recSugCartaoAdm.X + 24
+                  Y: =recSugCartaoAdm.Y + recSugCartaoAdm.Height - 68
+            - btnSugEnviarAdm:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisplayMode: =If(locSugGrav, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 120, 212, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HoverFill: =RGBA(16, 110, 190, 1)
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(txtSugAdm.Text)),
+                        Notify("Escreva a sugestão antes de enviar.", NotificationType.Warning),
+                        UpdateContext({locSugGrav: true});
+                        IfError(
+                            Patch(
+                                TxSugestao,
+                                Defaults(TxSugestao),
+                                {
+                                    Title: Left(Trim(txtSugAdm.Text), 80),
+                                    App: {Value: "Round Transplante"},
+                                    Tela: App.ActiveScreen.Name,
+                                    Sugestao: Trim(txtSugAdm.Text),
+                                    Categoria: Coalesce(gMinhaCategoria, "Não cadastrado"),
+                                    Status: {Value: "Nova"}
+                                }
+                            ),
+                            UpdateContext({locSugGrav: false});
+                            Notify("Não foi possível registrar a sugestão. Tente de novo.", NotificationType.Error),
+                            Reset(txtSugAdm);
+                            UpdateContext({locSug: false, locSugGrav: false});
+                            Notify("Sugestão registrada. Obrigado!", NotificationType.Success)
+                        )
+                    )
+                  Size: =11
+                  Text: =If(locSugGrav, "Enviando...", "Enviar")
+                  Width: =(recSugCartaoAdm.Width - 56) / 2
+                  X: =recSugCartaoAdm.X + 32 + (recSugCartaoAdm.Width - 56) / 2
+                  Y: =recSugCartaoAdm.Y + recSugCartaoAdm.Height - 68
+      - ctnAdm:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height - 120
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =6
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =16
+            PaddingRight: =12
+            PaddingTop: =4
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =120
+          Children:
+            - lblAdmSec1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  LayoutMinHeight: =28
+                  PaddingLeft: =0
+                  Size: =14
+                  Text: ="1 · O paciente"
+            - lblAdmNomeCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Nome completo  ·  obrigatório"
+            - txtAdmNome:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HintText: ="Nome do paciente"
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmProntCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Prontuário"
+            - txtAdmPront:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HintText: ="Registro no AGHUx"
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmNascCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data de nascimento"
+            - dtpAdmNasc:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  EndYear: =Year(Today())
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+                  StartYear: =1920
+            - lblAdmLeitoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Leito  ·  obrigatório"
+            - txtAdmLeito:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  HintText: ="301"
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmAdmissaoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data de admissão  ·  obrigatório"
+            - dtpAdmAdmissao:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  EndYear: =Year(Today())
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+                  StartYear: =Year(Today()) - 1
+            - lblAdmTxCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data do transplante"
+            - dtpAdmTx:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  EndYear: =Year(Today())
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+                  StartYear: =1980
+            - lblAdmDoadorCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Tipo de doador"
+            - ddAdmDoador:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxPaciente.'Tipo de doador')
+                  Items.Value: =Value
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmPeculCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Peculiaridade imunológica ou infecciosa"
+            - txtAdmPecul:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =64
+                  HintText: ="Hiperimunizado, doador com sorologia, colonização prévia"
+                  LayoutMinHeight: =64
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetAdm
+                  Size: =12
+            - recAdmSep1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(230, 234, 238, 1)
+                  Height: =1
+                  LayoutMinHeight: =1
+            - lblAdmSec2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(22, 32, 43, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  LayoutMinHeight: =28
+                  PaddingLeft: =0
+                  Size: =14
+                  Text: ="2 · O plano terapêutico"
+            - lblAdmMotivoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Por que o paciente está internado?"
+            - txtAdmMotivo:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =74
+                  HintText: ="Motivo da internação, em uma frase"
+                  LayoutMinHeight: =74
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmDesfechoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Desfecho pretendido"
+            - txtAdmDesfecho:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Default: =""
+                  Font: =Font.'Segoe UI'
+                  Height: =74
+                  HintText: ="Em que condição este paciente deve sair daqui"
+                  LayoutMinHeight: =74
+                  Mode: =TextMode.MultiLine
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmAlvoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =38
+                  LayoutMinHeight: =38
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Data-alvo de alta  ·  é a data contra a qual o desvio será medido para sempre"
+            - dtpAdmAlvo:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  DefaultDate: =DateAdd(Today(), 7, TimeUnit.Days)
+                  EndYear: =Year(Today()) + 1
+                  Font: =Font.'Segoe UI'
+                  Height: =44
+                  LayoutMinHeight: =44
+                  Reset: =gResetAdm
+                  Size: =12
+                  StartYear: =Year(Today())
+            - lblAdmDestinoCap:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  LayoutMinHeight: =22
+                  PaddingLeft: =0
+                  Size: =11
+                  Text: ="Destino previsto após a alta"
+            - ddAdmDestino:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  AllowEmptySelection: =true
+                  BorderColor: =RGBA(200, 208, 216, 1)
+                  Font: =Font.'Segoe UI'
+                  Items: =Choices(TxPlano.'Destino após a alta')
+                  Items.Value: =Value
+                  Reset: =gResetAdm
+                  Size: =12
+            - lblAdmAviso:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(96, 94, 92, 1)
+                  Fill: =RGBA(247, 249, 250, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =74
+                  LayoutMinHeight: =74
+                  PaddingLeft: =8
+                  Size: =10
+                  Text: ="Ao gravar, o paciente entra como internado e o plano nasce na versão 1, com alvo original e alvo atual iguais. O alvo original não muda mais, e é ele que mede o desvio."
+            - btnAdmGravar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  Color: =RGBA(255, 255, 255, 1)
+                  Fill: =RGBA(15, 109, 120, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =48
+                  HoverFill: =RGBA(12, 90, 100, 1)
+                  LayoutMinHeight: =48
+                  OnSelect: |-
+                    =If(IsBlank(txtAdmNome.Text) || IsBlank(txtAdmLeito.Text) || IsBlank(dtpAdmAdmissao.SelectedDate), Notify("Preencha nome, leito e data de admissão antes de gravar.", NotificationType.Warning), Set(gNovoPaciente, Patch(TxPaciente, Defaults(TxPaciente), {Title: txtAdmNome.Text, Prontuário: txtAdmPront.Text, 'Data de nascimento': dtpAdmNasc.SelectedDate, Leito: txtAdmLeito.Text, 'Data de admissão': dtpAdmAdmissao.SelectedDate, 'Data do transplante': dtpAdmTx.SelectedDate, 'Tipo de doador': ddAdmDoador.Selected, 'Peculiaridade imunológica ou infecciosa': txtAdmPecul.Text, Status: LookUp(Choices(TxPaciente.Status), Value = "Internado")})); Set(gNovoPlano, Patch(TxPlano, Defaults(TxPlano), {Title: txtAdmNome.Text & " · plano", PacienteRef: {Id: gNovoPaciente.ID, Value: gNovoPaciente.Title}, MotivoInternacao: txtAdmMotivo.Text, DesfechoPretendido: txtAdmDesfecho.Text, DataAlvoAltaOriginal: dtpAdmAlvo.SelectedDate, DataAlvoAltaAtual: dtpAdmAlvo.SelectedDate, DestinoPosAlta: ddAdmDestino.Selected, OrigemPlano: LookUp(Choices(TxPlano.'Origem do plano'), Value = "Admissão"), VersaoPlano: 1, DataUltimaRevisao: Now()})); Patch(TxPlanoVersao, Defaults(TxPlanoVersao), {Title: txtAdmNome.Text & " · v1", PlanoRef: {Id: gNovoPlano.ID, Value: gNovoPlano.Title}, PacienteRef: {Id: gNovoPaciente.ID, Value: gNovoPaciente.Title}, Versao: 1, DataAlvoAlta: dtpAdmAlvo.SelectedDate, DestinoPosAlta: ddAdmDestino.Selected, MotivoInternacao: txtAdmMotivo.Text, DesfechoPretendido: txtAdmDesfecho.Text, QuemRevisou: gMeuMembro, DataRevisao: Now()}); Set(gResetAdm, true); Set(gResetAdm, false); Notify("Paciente admitido e plano criado.", NotificationType.Success); Navigate(scrPainel))
+                  Size: =14
+                  Text: ="Admitir e criar o plano"

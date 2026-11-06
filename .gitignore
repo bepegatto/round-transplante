@@ -1,0 +1,6 @@
+*.msapp
+*.zip
+*.csv
+*.xlsx
+saidas/
+dados/
